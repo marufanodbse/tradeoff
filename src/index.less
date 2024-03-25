@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.App {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: scroll;
+  // background: rgb(39, 33, 33);
+  background: #3e0d09;
+}
+
+.main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding-top: 100px;
+}
+
+.tradeButton {
+  background: linear-gradient(90deg, rgba(117, 18, 6, 1) 0%, rgba(189, 14, 33, 1) 50%, rgba(117, 18, 6, 1) 100%);
+  border-radius: 40px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.tradeButtonGray {
+  background: #ccc;
+  border-radius: 40px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.ant-drawer-body {
+  padding: 0px !important;
+}
