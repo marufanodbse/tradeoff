@@ -133,11 +133,8 @@ function Ipo() {
             </div>
 
             <div className='mx-6 rounded-xl bg-white'>
-                <div className='px-8 pt-3 pb-3 border-b border-[#ccc] flex'>
-                    IPO 数量
-                </div>
                 <div className='px-8'>
-                    <div className=' pt-4 pb-4'>
+                    <div className=' pt-6 pb-4'>
                         <Input value={ipoAmount} onChange={(e) => {
                             console.log(e.target.value)
                             let valueNum = verifyNum(e.target.value)
