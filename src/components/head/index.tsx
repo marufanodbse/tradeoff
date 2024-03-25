@@ -3,7 +3,7 @@ import { useGlobal } from "../../context/GlobalProvider"
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Drawer from "antd/es/drawer";
-import { homeIcon, menuIcon, menuLogo, myIcon, stakeIcon } from "../../image";
+import { homeIcon, ipoIcon, menuIcon, menuLogo, myIcon, stakeIcon } from "../../image";
 import { IResponse, getReadData } from "../../config/api";
 import { usdtStakeABI } from "../../abi/abi";
 import { zeroAddress } from "viem";
@@ -71,6 +71,13 @@ function Head({ setOpen, isRegister }: IHead) {
                   navLink("/home")
                   setMenuOpen(false)
                 }}>首页</p>
+              </div>
+              <div className=' text-white mb-4 flex' >
+                <img className=" w-5 h-5 mr-2" src={ipoIcon} alt="" />
+                <p className='  ' onClick={() => {
+                  navLink("/ipo")
+                  setMenuOpen(false)
+                }}>IPO</p>
               </div>
 
               <div className=' text-white mb-4 flex' >

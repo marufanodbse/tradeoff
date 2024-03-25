@@ -10,6 +10,7 @@ import checkIcon from './check.png';
 import copyIcon from './copy.png';
 import myIcon from './my.png';
 import homeIcon from './home.png';
-import stakeIcon from './stake.png'
+import stakeIcon from './stake.png';
+import ipoIcon from './ipo.png'
 
-export { myIcon, homeIcon, stakeIcon, menuIcon, successIcon, failIcon, loadingIcon, menuLogo, lockIcon, lockEdIcon, changeIcon, checkIcon, copyIcon }
+export { ipoIcon, myIcon, homeIcon, stakeIcon, menuIcon, successIcon, failIcon, loadingIcon, menuLogo, lockIcon, lockEdIcon, changeIcon, checkIcon, copyIcon }
