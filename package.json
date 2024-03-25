@@ -2,6 +2,7 @@
   "name": "tradeoff-interface",
   "version": "0.0.1",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
