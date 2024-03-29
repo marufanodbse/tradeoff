@@ -13,6 +13,9 @@ import { maxInt256 } from 'viem';
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 
+// let IpoAddr: any = "0x72026A3Ac663af43a3FAE076BC0D893C72cD8Ec2"
+// let UsdtAddr: any ="0xa2e3ec5Fa64f64AF91580D509D21Cd42DbF34545"
+
 function Ipo() {
     const { account } = useGlobal()
     const [ipoAmount, setIpoAmount] = useState<string>("")
@@ -33,7 +36,7 @@ function Ipo() {
                 args: [account, IpoAddr],
             })
             const balanceConfig: any = await fetchBalanceObj(account, UsdtAddr)
-
+            console.log("balanceConfig", balanceConfig)
             let sendAmount = new BigNumber(ipoAmount.toString()).multipliedBy(10 ** balanceConfig.decimals).toString()
             if (new BigNumber(balanceConfig.value).isLessThan(sendAmount)) {
                 console.log("余额不足")
@@ -98,6 +101,7 @@ function Ipo() {
                 sendTipErr()
             }
         } catch (error) {
+            console.log(error)
             sendTipErr()
         }
     }

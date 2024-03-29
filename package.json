@@ -4,6 +4,7 @@
   "private": true,
   "homepage": ".",
   "dependencies": {
+    "@ant-design/icons": "^5.3.5",
     "@ethersproject/contracts": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@rainbow-me/rainbowkit": "workspace:*",
@@ -32,8 +33,10 @@
     "dev": "react-scripts start",
     "start": "react-scripts start",
     "start:dev": "dotenv -e .env.dev react-scripts start",
+    "start:bsc_dev": "dotenv -e .env.bsc_dev react-scripts start",
     "build": "react-scripts build",
     "build:dev": "dotenv -e .env.dev react-scripts build",
+    "build:bsc_dev": "dotenv -e .env.bsc_dev react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@rainbow-me)/\"",
     "eject": "react-scripts eject"
   },

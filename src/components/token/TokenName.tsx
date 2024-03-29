@@ -1,26 +1,29 @@
-import React, { useEffect, useState } from 'react'
-import { prepareWriteContract } from 'wagmi/actions'
-import { erc20ABI } from '../../abi/abi'
+import { useEffect, useState } from 'react'
+import { fetchBalanceObj } from '../../config/api'
+import { useGlobal } from '../../context/GlobalProvider';
 
 function TokenName({ tokenAddr }: { tokenAddr: string }) {
+    const { account } = useGlobal();
     const [name, setName] = useState<string>("")
     useEffect(() => {
-        TokenName(tokenAddr)
-    }, [tokenAddr])
+        if (tokenAddr) {
+            TokenName(tokenAddr)
+        }
+    }, [name, tokenAddr])
     const TokenName = async (addr: any) => {
-        try {
-            const config: any = await prepareWriteContract({
-                address: addr,
-                abi: erc20ABI,
-                functionName: 'symbol',
-            })
-            setName(config.result)
-        } catch (error) {
-            setName("")
+        if (tokenAddr == "BNB" || tokenAddr == process.env.REACT_APP_TOKEN_BNB) {
+            setName("BNB");
+        } else {
+            try {
+                const balanceConfig: any = await fetchBalanceObj(account, tokenAddr)
+                setName(balanceConfig.symbol)
+            } catch (error) {
+                setName("notFund")
+            }
         }
     }
     return (
-        <>{name}</>
+        <>{name && name}</>
     )
 }
 

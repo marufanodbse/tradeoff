@@ -12,5 +12,6 @@ import myIcon from './my.png';
 import homeIcon from './home.png';
 import stakeIcon from './stake.png';
 import ipoIcon from './ipo.png'
+import swapIcon from './swap.png';
 
-export { ipoIcon, myIcon, homeIcon, stakeIcon, menuIcon, successIcon, failIcon, loadingIcon, menuLogo, lockIcon, lockEdIcon, changeIcon, checkIcon, copyIcon }
+export {swapIcon, ipoIcon, myIcon, homeIcon, stakeIcon, menuIcon, successIcon, failIcon, loadingIcon, menuLogo, lockIcon, lockEdIcon, changeIcon, checkIcon, copyIcon }

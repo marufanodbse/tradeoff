@@ -21,6 +21,12 @@ module.exports = {
       },
       lineHeight:{
         "15":"60px"
+      },
+      backgroundColor:{
+        "1":"#f1e7e7"
+      },
+      borderColor:{
+        '1':"#3e0d09"
       }
     },
   },

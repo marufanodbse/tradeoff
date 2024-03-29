@@ -134,7 +134,7 @@ function Stake() {
 
                 <div className='mx-6 rounded-xl bg-white'>
                     <div className='px-8 pt-5 pb-5 border-b border-[#ccc] flex'>
-                        <div className=' bg-[#f1e7e7] h-16 w-16 rounded-full'>
+                        <div className=' bg-1 h-16 w-16 rounded-full'>
                             <img className=' w-16 h-16 p-3' src={menuLogo} alt="" />
                         </div>
                         <div className=' flex-1 text-right mt-6'>

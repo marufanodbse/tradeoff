@@ -8,7 +8,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { Chain, darkTheme, getDefaultWallets, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
-  bsc,
+  bsc,bscTestnet
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import App from './App';
@@ -38,11 +38,12 @@ const INK: Chain = {
 };
 
 
-
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    net == "INK" ? INK : bsc,
+    // net == "INK" ? INK : bsc,
     // bsc,
+    // INK,
+    bscTestnet
   ],
   [publicProvider()]
 );
