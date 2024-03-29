@@ -148,7 +148,7 @@ function Stake() {
                             }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                         </div>
                         <div className=' pb-4'>
-                            <p className=' font-bold text-sm py-2 text-main'>APY 10.34%</p>
+                            <p className=' text-xs py-2 text-main'>3千万TRO用于USDT质押挖矿，按10年线性产出, 按质押量加权平分每天产出</p>
                         </div>
                         <div className=' pb-7'>
                             <div className='tradeButton py-2' onClick={() => {
