@@ -130,13 +130,19 @@ function Stake() {
                 </div>
 
                 <div className='mx-6 rounded-xl bg-white'>
-                    <div className='px-8 pt-5 pb-5 border-b border-[#ccc] flex'>
+                    <div className='px-8 pt-4 pb-4 border-b border-[#ccc] flex'>
                         <div className=' bg-1 h-16 w-16 rounded-full'>
                             <img className=' w-16 h-16 p-3' src={menuLogo} alt="" />
                         </div>
-                        <div className=' flex-1 text-right mt-6'>
-                            <p className='text-sm text-gray-300'>lock-up period: 100 day</p>
-                            <p className='text-sm text-gray-300'>Date:2022.3.4-2022.6.10</p>
+                        <div className=' flex-1  mt-3 text-gray-500'>
+                            <div className='text-sm flex'>
+                                <p className=' flex-1 text-right '>lock-up period: 100 day</p>
+                                {/* <p className=' w-20'> </p> */}
+                            </div>
+                            <div className='text-sm flex'>
+                                <p className=' flex-1 text-right'>  Date: 2022.3.4-2022.6.10</p>
+                                {/* <p className=' w-20'></p> */}
+                            </div>
                         </div>
                     </div>
                     <div className='px-8'>
@@ -148,7 +154,7 @@ function Stake() {
                             }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                         </div>
                         <div className=' pb-4'>
-                            <p className=' text-xs py-2 text-main'>3千万TRO用于USDT质押挖矿，按10年线性产出, 按质押量加权平分每天产出</p>
+                            <p className=' text-xs py-2 text-gray-500'>3千万TRO用于USDT质押挖矿，按10年线性产出, 按质押量加权平分每天产出</p>
                         </div>
                         <div className=' pb-7'>
                             <div className='tradeButton py-2' onClick={() => {

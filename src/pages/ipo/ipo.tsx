@@ -10,6 +10,7 @@ import { useGlobal } from '../../context/GlobalProvider';
 import BigNumber from "bignumber.js";
 import { maxInt256 } from 'viem';
 import TokenName from '../../components/token/TokenName';
+import { menuLogo } from '../../image';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
@@ -136,16 +137,35 @@ function Ipo() {
             </div>
 
             <div className='mx-6 rounded-xl bg-white'>
+                <div className='px-8 pt-4 pb-4 border-b border-[#ccc] flex'>
+                    <div className=' bg-1 h-16 w-16 rounded-full'>
+                        <img className=' w-16 h-16 p-3' src={menuLogo} alt="" />
+                    </div>
+                    <div className=' flex-1  mt-3 text-gray-500'>
+                        <div className='text-sm flex'>
+                            <p className=' flex-1 text-right '>  首期IPO价格:</p>
+                            <p className=' w-20'>
+                                0.4USDT</p>
+                        </div>
+                        <div className='text-sm flex'>
+                            <p className=' flex-1 text-right'>  IPO总量:</p>
+                            <p className=' w-20'>
+                                500万TRO
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 <div className='px-8'>
-                    <div className=' pt-6 pb-2'>
+                    <div className=' pt-5 pb-2'>
                         <Input value={ipoAmount} onChange={(e) => {
                             console.log(e.target.value)
                             let valueNum = verifyNum(e.target.value)
                             setIpoAmount(valueNum)
                         }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                     </div>
-                    <div className=' text-xs mb-3'>
-                        能得到的 {new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : new BigNumber(ipoAmount).dividedBy(10).multipliedBy(4).toFixed(3)}
+                    <div className=' text-xs mb-3 text-right text-gray-500'>
+                        能得到的 
+                        { new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : new BigNumber(ipoAmount).dividedBy(10).multipliedBy(4).toFixed(3)}
                         <TokenName tokenAddr={rewardAddr + ""} />
                     </div>
                     <div className=' pb-5'>
