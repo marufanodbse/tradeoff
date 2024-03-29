@@ -9,9 +9,11 @@ import { erc20ABI, ipoABI } from '../../abi/abi';
 import { useGlobal } from '../../context/GlobalProvider';
 import BigNumber from "bignumber.js";
 import { maxInt256 } from 'viem';
+import TokenName from '../../components/token/TokenName';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
+let rewardAddr: any = process.env.REACT_APP_TOKEN_INK + ""
 
 // let IpoAddr: any = "0x72026A3Ac663af43a3FAE076BC0D893C72cD8Ec2"
 // let UsdtAddr: any ="0xa2e3ec5Fa64f64AF91580D509D21Cd42DbF34545"
@@ -130,22 +132,22 @@ function Ipo() {
 
         <div className='main'>
             <div className="mx-6 text-white">
-                <p className=' text-center font-bold text-2xl mb-3'>巨星计划</p>
-                <p className="indent-8 pb-8 text-xs  whitespace-pre-line">
-                    巨星计划旨在邀请超零社区DAO道组织的核心种子用户。本期全球限额30名，自愿参与。<br /> 参与者主要权益:<br />1. 获得SOD巨星额度兑换机会；<br />  2.自动享有流动性底池份额和对应收益；<br />  3.成为DAO组织核心成员，共同参与决策，如新生态引入、社区建设和平台参数机制设定；<br />  4.作为早期聚合器构建成员获得相应未来权益。
-                </p>
+                <p className=' text-center font-bold text-2xl mb-6'>IPO</p>
             </div>
 
             <div className='mx-6 rounded-xl bg-white'>
                 <div className='px-8'>
-                    <div className=' pt-6 pb-4'>
+                    <div className=' pt-6 pb-2'>
                         <Input value={ipoAmount} onChange={(e) => {
                             console.log(e.target.value)
                             let valueNum = verifyNum(e.target.value)
                             setIpoAmount(valueNum)
                         }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                     </div>
-
+                    <div className=' text-xs mb-3'>
+                        能得到的 {new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : new BigNumber(ipoAmount).dividedBy(10).multipliedBy(4).toFixed(3)}
+                        <TokenName tokenAddr={rewardAddr + ""} />
+                    </div>
                     <div className=' pb-5'>
                         <div className='tradeButton py-2' onClick={() => {
                             sendIpoJionApprove()

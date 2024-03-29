@@ -126,10 +126,7 @@ function Stake() {
             <TipPop open={tipOpen} setOpen={setTipOpen} tipPopText={tipOpenText} tipPopState={tipOpenState} />
             <div className=' main '>
                 <div className="mx-6 text-white">
-                    <p className=' text-center font-bold text-2xl mb-3'>Stake</p>
-                    <p className="indent-8 pb-8 text-xs">
-                        BABY Social DAO致力于Web3.0、Metaverse和NFT领域，让世界各地的区块链爱好者通过寻找宝贝来重新定义资源融合。这样，区块链爱好者可以愉快地参与而不影响他们的日常生活和工作，同时获得相应的区块链财富。
-                    </p>
+                    <p className=' text-center font-bold text-2xl mb-6'>STAKE</p>
                 </div>
 
                 <div className='mx-6 rounded-xl bg-white'>
