@@ -220,7 +220,7 @@ function StakeInfo() {
                         </div>
                     </div>
                 </div>
-                <div className='mx-6  bg-white text-center rounded-xl p-3 mt-5 mb-8'>
+                {/* <div className='mx-6  bg-white text-center rounded-xl p-3 mt-5 mb-8'>
                     <div className='font-bold text-xl flex leading-8'>
                         分享链接:
                         <div className=" flex mt-1" onClick={() => {
@@ -238,7 +238,7 @@ function StakeInfo() {
                             <img className="w-5 h-5" src={copyIcon} alt="" />
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <div className=' mx-6 bg-white rounded-xl p-3'>
                     <div className=' text-center pb-4 text-man font-bold text-lg'> 质押信息</div>
                     <div className='flex leading-8  mb-3'>
@@ -258,7 +258,6 @@ function StakeInfo() {
                             {
                                 new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0' style={{ width: "100px" }} > 解押</div> : <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
                             }
-
                         </div>
                     </div>
                     <div className='flex leading-8  mb-3'>
@@ -270,7 +269,6 @@ function StakeInfo() {
                             {
                                 new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0' style={{ width: "100px" }} > 提取收益</div> : <div className='tradeButton p-0 ' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
                             }
-
                         </div>
                     </div>
                 </div>
@@ -281,7 +279,7 @@ function StakeInfo() {
                         <div className='  w-36'>解锁时间</div>
                         <div className='w-20'>状态</div>
                     </div> */}
-                    <div className=' pt-4 min-h-[150px] max-h-[270px] overflow-scroll'>
+                    <div className=' pt-4 min-h-[120px] max-h-[400px] overflow-scroll'>
                         {/* {
                             stakeList && stakeList.map((item: any, index: number) => {
                                 return <div key={index} className=' flex text-sm pb-2 '>

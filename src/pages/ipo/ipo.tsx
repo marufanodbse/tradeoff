@@ -1,33 +1,115 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Head from '../../components/head'
 import TipPop from '../../components/pop/TipPop'
 import Input from 'antd/es/input/Input';
 import { verifyNum } from '../../utils/formatting';
-import { fetchBalanceObj, sendStatus } from '../../config/api';
+import { IResponse, fetchBalanceObj, getReadData, sendStatus } from '../../config/api';
 import { prepareWriteContract } from 'wagmi/actions';
 import { erc20ABI, ipoABI } from '../../abi/abi';
 import { useGlobal } from '../../context/GlobalProvider';
 import BigNumber from "bignumber.js";
-import { maxInt256 } from 'viem';
-import TokenName from '../../components/token/TokenName';
+import { maxInt256, zeroAddress } from 'viem';
 import { menuLogo } from '../../image';
-import { useNavigate } from 'react-router-dom';
-import { removeTrailingZeros } from '../../utils';
+import { fromTokenValue, removeTrailingZeros } from '../../utils';
+import { Modal } from 'antd';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
-let rewardAddr: any = process.env.REACT_APP_TOKEN_INK + ""
 
 function Ipo() {
     const { account } = useGlobal()
-    const navigate = useNavigate();
     const [ipoAmount, setIpoAmount] = useState<string>("")
 
     const [tipOpen, setTipOpen] = useState<boolean>(false);
     const [tipOpenState, setTipOpenState] = useState<string>("loading");
     const [tipOpenText, setTipOpenText] = useState<string>("");
 
-    const sendIpoJionApprove = async () => {
+    const [managerAddr, setManagerAddr] = useState<string>("")
+    const [inviters, setInviters] = useState<string>("")
+    const [claimValue, setClaimValue] = useState<string>("0")
+    const [releaseValue, setReleaseValue] = useState<string>("0")
+    const [totalValue, setTotalValue] = useState<string>("0")
+
+    const [invitersPop, setInvitersPop] = useState<boolean>(false);
+
+    const [shareAddr, setShareAddrAddr] = useState<string>("")
+
+
+    useEffect(() => {
+        getManager()
+        init()
+    }, [account])
+
+    const init = () => {
+        getInviters()
+        getValues()
+    }
+
+    //values
+    const getValues = async () => {
+        let { data, code }: IResponse = await getReadData("values", ipoABI, IpoAddr, [account], account);
+        if (code == 200) {
+            setClaimValue(data[0].toString())
+            setReleaseValue(data[1].toString())
+            setTotalValue(data[2].toString())
+        }
+    }
+
+    // inviters
+    const getInviters = async () => {
+        let { data, code }: IResponse = await getReadData("inviters", ipoABI, IpoAddr, [account], account);
+        console.log("getInviters", data)
+        if (code == 200) {
+            setInviters(data)
+        }
+    }
+
+    // manager
+    const getManager = async () => {
+        let { data, code }: IResponse = await getReadData("manager", ipoABI, IpoAddr, [], account);
+        console.log("getManager", data)
+        if (code == 200) {
+            setManagerAddr(data)
+        }
+    }
+
+    const getShareAddr = async () => {
+        console.log(shareAddr)
+        if (shareAddr == managerAddr) {
+            sendIpoJionApprove(shareAddr)
+            setInvitersPop(false)
+            setShareAddrAddr("")
+        } else {
+            try {
+                let { data, code }: IResponse = await getReadData("inviters", ipoABI, IpoAddr, [shareAddr], account);
+                console.log("getShareAddr", data)
+                if (code == 200 && data != zeroAddress) {
+                    sendIpoJionApprove(shareAddr)
+                    setInvitersPop(false)
+                    setShareAddrAddr("")
+                } else {
+                    setTipOpen(true);
+                    setTipOpenState("error")
+                    setTipOpenText("推荐地址错误")
+                    setTimeout(() => {
+                        setTipOpenState("")
+                        setTipOpen(false)
+                    }, 2000);
+                }
+            } catch (error) {
+                setTipOpen(true);
+                setTipOpenState("error")
+                setTipOpenText("推荐地址错误")
+                setTimeout(() => {
+                    setTipOpenState("")
+                    setTipOpen(false)
+                }, 2000);
+            }
+        }
+
+    }
+
+    const sendIpoJionApprove = async (inviterAddr: any) => {
         setTipOpen(true);
         setTipOpenState("loading")
         setTipOpenText("加载中...")
@@ -67,7 +149,7 @@ function Ipo() {
                     console.log("授权成功")
                     setTipOpenText("授权成功...")
                     setTimeout(() => {
-                        sendIpoJionApprove()
+                        sendIpoJionApprove(inviterAddr)
                     }, 1000);
                 } else {
                     setTipOpenState("error")
@@ -78,20 +160,20 @@ function Ipo() {
                     }, 2000);
                 }
             } else {
-                sendIpoJion(sendAmount)
+                sendIpoJion(sendAmount, inviterAddr)
             }
         } catch (error) {
             sendTipErr()
         }
     }
 
-    const sendIpoJion = async (sendAmount: any) => {
+    const sendIpoJion = async (sendAmount: any, inviterAddr: any) => {
         try {
             const ipoConfig = await prepareWriteContract({
                 address: IpoAddr,
                 abi: ipoABI,
                 functionName: 'join',
-                args: [sendAmount, account],
+                args: [sendAmount, inviterAddr],
             })
             console.log("ipoConfig", ipoConfig)
 
@@ -109,10 +191,36 @@ function Ipo() {
         }
     }
 
+    const sendClaim = async () => {
+        setTipOpen(true);
+        setTipOpenState("loading")
+        setTipOpenText("加载中...")
+        try {
+            const ipoConfig = await prepareWriteContract({
+                address: IpoAddr,
+                abi: ipoABI,
+                functionName: 'claim',
+            })
+            console.log("ipoConfig", ipoConfig)
+
+            let status = await sendStatus(ipoConfig)
+
+            if (status) {
+                sendTipSuccess()
+            } else {
+                sendTipErr()
+            }
+        } catch (error) {
+            console.log(error)
+            sendTipErr()
+        }
+    }
+
     const sendTipSuccess = () => {
         setTipOpenState("success")
         setTipOpenText("交易成功")
         setTimeout(() => {
+            init();
             setTipOpen(false)
             setTipOpenState("")
         }, 2000);
@@ -127,15 +235,40 @@ function Ipo() {
         }, 2000);
     }
 
+
+
     return (<div>
         <Head />
         <TipPop open={tipOpen} setOpen={setTipOpen} tipPopText={tipOpenText} tipPopState={tipOpenState} />
+        <Modal
+            className=''
+            style={{
+                marginTop: "-20%",
+            }}
+            open={invitersPop}
+            centered
+            onCancel={() => { setInvitersPop(false) }}
+            width={"300px"}
+            footer={null}
+            closeIcon={null}
+        >
+            <div className=' mb-3' >
+                <div className=' mb-2'>填写推荐人地址</div>
+                <Input value={shareAddr} onChange={(e) => {
+                    setShareAddrAddr(e.target.value)
+                }} defaultValue="0.0" />
+            </div>
+            <div>
+                <div className='tradeButton py-2' onClick={() => {
+                    getShareAddr()
+                }} >加入计划</div>
+            </div>
+        </Modal>
 
         <div className='main'>
             <div className="mx-6 text-white">
                 <p className=' text-center font-bold text-2xl mb-6'>IPO</p>
             </div>
-
             <div className='mx-6 rounded-xl bg-white'>
                 <div className='px-8 pt-4 pb-4 border-b border-[#ccc] flex'>
                     <div className=' bg-1 h-16 w-16 rounded-full'>
@@ -154,15 +287,6 @@ function Ipo() {
                             </p>
                         </div>
                     </div>
-
-                    {/* <div className=' flex-1  mt-3 text-gray-500'>
-                        <div className='text-sm flex'>
-                            <p className=' flex-1 text-right '>首期IPO价格: 0.4 USDT</p>
-                        </div>
-                        <div className='text-sm flex'>
-                            <p className=' flex-1 text-right'> IPO总量: 500万 TRO</p>
-                        </div>
-                    </div> */}
                 </div>
                 <div className='px-8'>
                     <div className=' pt-5 pb-2'>
@@ -178,10 +302,58 @@ function Ipo() {
                         {/* <TokenName tokenAddr={rewardAddr + ""} /> */}
                         TRO
                     </div>
-                    <div className=' pb-5'>
+                    <div className=' pb-3'>
                         <div className='tradeButton py-2' onClick={() => {
-                            sendIpoJionApprove()
+                            if (new BigNumber(ipoAmount).isZero() || ipoAmount == "") {
+                                setTipOpen(true);
+                                setTipOpenState("error")
+                                setTipOpenText("数量不能为空")
+                                setTimeout(() => {
+                                    setTipOpenState("")
+                                    setTipOpen(false)
+                                }, 2000);
+                                return
+                            }
+
+                            if (account == managerAddr) {
+                                sendIpoJionApprove(zeroAddress)
+                            } else {
+                                if (inviters == zeroAddress) {
+                                    setInvitersPop(true)
+                                } else {
+                                    sendIpoJionApprove(inviters)
+                                }
+                            }
                         }} >加入计划</div>
+                    </div>
+                </div>
+
+                <div className=' px-8 text-sm pt-2 pb-3'>
+                    <div>
+                        <p>
+                            <span className='text-gray-500 pr-1'> 可获得总量:</span>
+                            {fromTokenValue(totalValue, 18, 3)}
+                        </p>
+
+                    </div>
+                    <div >
+                        <p>
+                            <span className='text-gray-500 pr-1'> 已解锁数量:</span>
+                            {fromTokenValue(releaseValue, 18, 3)}
+                        </p>
+                    </div>
+                    <div className=' flex '>
+                        <p className=' flex-1 leading-7'>
+                            <span className='text-gray-500 pr-1'> 可领取数量:</span>
+                            {fromTokenValue(claimValue, 18, 3)}
+                        </p>
+                        <div>
+                            {
+                                new BigNumber(claimValue).isZero() ? <div className='tradeButtonGray py-1 w-24'  >Claim</div> : <div className='tradeButton py-1 w-24' onClick={() => {
+                                    sendClaim()
+                                }} >Claim</div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

@@ -15,14 +15,14 @@ import { ArrowLeftOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons
 import TokenIcon from '../../../components/token/tokenIcon';
 
 
-const INK = process.env.REACT_APP_TOKEN_INK + "";
+const REWARD = process.env.REACT_APP_TOKEN_REWARD + "";
 const USDT = process.env.REACT_APP_TOKEN_USDT + "";
 const factroryAddr = process.env.REACT_APP_FACTORY + "";
 
 function AddPair() {
     const navigate = useNavigate();
     const { account } = useGlobal()
-    const [tokenA, setTokenA] = useState<string>(INK);
+    const [tokenA, setTokenA] = useState<string>(REWARD);
     const [tokenB, setTokenB] = useState<string>(USDT);
 
     const [tokenPopOpen, setTpkenPopOpen] = useState<boolean>(false);

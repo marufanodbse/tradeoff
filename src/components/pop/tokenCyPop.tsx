@@ -21,7 +21,7 @@ interface OpenStatus {
     setTokenB?: Function,
 }
 
-const INK = process.env.REACT_APP_TOKEN_INK + "";
+const REWARD = process.env.REACT_APP_TOKEN_REWARD + "";
 const USDT = process.env.REACT_APP_TOKEN_USDT + "";
 const FREE = process.env.REACT_APP_TOKEN_FREE + "";
 function TokenCyPop({ open, setOpen, tokenType, tokenIn, setTokenIn, tokenOut, setTokenOut, linkType, linkTokenA, linkTokenB, setTokenA, setTokenB }: OpenStatus) {
@@ -30,7 +30,7 @@ function TokenCyPop({ open, setOpen, tokenType, tokenIn, setTokenIn, tokenOut, s
     const [type, setType] = useState<boolean>(false);
     const [typeManger, setTypeManger] = useState<boolean>(true);
     const [localData, setLocalData] = useState<any>([]);
-    const [tokenList, setTopkenList] = useState<any>([INK, USDT, FREE])
+    const [tokenList, setTopkenList] = useState<any>([REWARD, USDT, FREE])
 
     const handleCy = (item: any) => {
         if (tokenOut && setTokenOut && setTokenIn && tokenIn) {

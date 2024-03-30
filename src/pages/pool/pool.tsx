@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 import PairItem from "./pairItem"
 export const pairData = ["0x796acbA6556f70A3c5756A0d8Fd0a10251c21050"]
 
-const INK = process.env.REACT_APP_TOKEN_INK + "";
+const REWARD = process.env.REACT_APP_TOKEN_REWARD + "";
 const USDT = process.env.REACT_APP_TOKEN_USDT + "";
 
 function Pool() {
@@ -53,7 +53,7 @@ function Pool() {
                     <div className=" w-10"></div>
                     <div className=" flex-1 tradeButton py-1"
                         onClick={() => {
-                            navigate('/pool/add/' + INK + '/' + USDT);
+                            navigate('/pool/add/' + REWARD + '/' + USDT);
                         }}
                     > 添加流动池</div>
                 </div>

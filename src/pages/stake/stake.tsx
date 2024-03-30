@@ -1,16 +1,17 @@
 import Input from 'antd/es/input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { menuIcon, menuLogo } from '../../image'
 import { verifyNum } from '../../utils/formatting'
 import { useGlobal } from '../../context/GlobalProvider'
 import { prepareWriteContract } from 'wagmi/actions'
 import { erc20ABI, usdtStakeABI } from '../../abi/abi'
 import BigNumber from "bignumber.js";
-import { fetchBalanceObj, sendStatus } from '../../config/api'
-import { maxInt256 } from 'viem'
+import { IResponse, fetchBalanceObj, getReadData, sendStatus } from '../../config/api'
+import { maxInt256, zeroAddress } from 'viem'
 import TipPop from '../../components/pop/TipPop'
 import Head from '../../components/head'
 import { useNavigate } from 'react-router-dom'
+import { Modal } from 'antd'
 
 let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
@@ -22,6 +23,39 @@ function Stake() {
     const [tipOpen, setTipOpen] = useState<boolean>(false);
     const [tipOpenState, setTipOpenState] = useState<string>("loading");
     const [tipOpenText, setTipOpenText] = useState<string>("");
+
+    const [registerOpen, setRegisterOpen] = useState<boolean>(false);
+    const [registerAddress, setRegisterAddress] = useState<string>("");
+
+    const [isTop, setIsTop] = useState<boolean>(false);
+    const [invitersAddress, setInvitersAddress] = useState<string>("");
+
+    useEffect(() => {
+        init()
+    }, [account])
+    const init = async () => {
+        getIsTopers()
+        getInviters()
+    }
+
+    // isTopers
+    const getIsTopers = async () => {
+        let { data, code }: IResponse = await getReadData("isTopers", usdtStakeABI, StakeAddr, [account], account);
+        console.log("getIsTopers", code, data)
+        if (code == 200) {
+            setIsTop(data)
+        }
+    }
+
+    // inviters
+    const getInviters = async () => {
+        let { data, code }: IResponse = await getReadData("inviters", usdtStakeABI, StakeAddr, [account], account);
+        console.log("getInviters", code, data)
+        if (code == 200) {
+            setInvitersAddress(data)
+        }
+    }
+
 
     const sendStakeApprove = async () => {
         setTipOpen(true);
@@ -123,10 +157,76 @@ function Stake() {
         }, 2000);
     }
 
+    const sendRegister = async () => {
+        setTipOpen(true);
+        setTipOpenState("loading")
+        setTipOpenText("加载中...")
+        try {
+            const stakeConfig = await prepareWriteContract({
+                address: StakeAddr,
+                abi: usdtStakeABI,
+                functionName: 'register',
+                args: [registerAddress],
+                account: account
+            })
+            console.log("stakeConfig", stakeConfig)
+            setTipOpenText("注册中...")
+            let status = await sendStatus(stakeConfig)
+
+            if (status) {
+                setTipOpenState("success")
+                setTipOpenText("注册成功")
+                setRegisterAddress("")
+                setRegisterOpen(false)
+                setTimeout(() => {
+                    init()
+                    setTipOpen(false)
+                    setTipOpenState("")
+                }, 2000);
+            } else {
+                setTipOpenState("error")
+                setTipOpenText("注册失败")
+                setTimeout(() => {
+                    setTipOpen(false)
+                    setTipOpenState("")
+                }, 2000);
+            }
+        } catch (error) {
+            setTipOpenState("error")
+            setTipOpenText("注册失败")
+            setTimeout(() => {
+                setTipOpen(false)
+                setTipOpenState("")
+            }, 2000);
+        }
+    }
+
     return (
         <div>
             <Head />
             <TipPop open={tipOpen} setOpen={setTipOpen} tipPopText={tipOpenText} tipPopState={tipOpenState} />
+            <Modal zIndex={1000} open={registerOpen}
+                style={{
+                    marginTop: "20%",
+                    maxWidth: "350px"
+                }}
+                onCancel={() => { setRegisterOpen(false) }}
+                title="填写推荐人"
+                footer={null}
+            >
+                <div >
+                    <div className=' mb-5'>
+                        <Input value={registerAddress} onChange={(e) => {
+                            setRegisterAddress(e.target.value)
+                        }} />
+                    </div>
+                    <div>
+                        <div className='tradeButton py-2' onClick={() => {
+                            sendRegister()
+                        }} >确定</div>
+                    </div>
+                </div>
+            </Modal>
             <div className=' main '>
                 <div className="mx-6 text-white">
                     <p className=' text-center font-bold text-2xl mb-6'>STAKE</p>
@@ -157,15 +257,36 @@ function Stake() {
                         <div className=' pb-4'>
                             <p className=' text-xs py-2 text-gray-500'>3千万TRO用于USDT质押挖矿，按10年线性产出, 按质押量加权平分每天产出</p>
                         </div>
-                        <div className=' pb-7'>
-                            <div className='tradeButton py-2' onClick={() => {
-                                sendStakeApprove()
-                            }} >Stake</div>
-                        </div>
+
+                        {
+                            isTop || invitersAddress !== zeroAddress ? <div className=' pb-7'>
+                                <div className='tradeButton py-2' onClick={() => {
+                                    sendStakeApprove()
+                                }} >Stake</div>
+                            </div> : <div className=' pb-5'>
+                                <div className='tradeButtonGray py-2' onClick={() => {
+                                    setTipOpen(true);
+                                    setTipOpenState("error")
+                                    setTipOpenText("请先注册！")
+                                    setTimeout(() => {
+                                        setTipOpenState("")
+                                        setTipOpen(false)
+                                    }, 2000);
+                                }} >Stake</div>
+                            </div>
+                        }
+
+                        {
+                            isTop || invitersAddress !== zeroAddress ? <></> : <div className=' pb-7'>
+                                <div className='tradeButton py-2' onClick={() => {
+                                    setRegisterOpen(true)
+                                }} >注册</div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
 
     )
 }

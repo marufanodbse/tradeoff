@@ -13,12 +13,10 @@ import TokenBalance from "../../components/token/tokenBalance";
 import { verifyNum } from "../../utils/formatting";
 import { formatNumber, fromTokenValue, toTokenValue } from "../../utils";
 import TokenName from "../../components/token/TokenName";
-import TokenIcon from "../../components/token/tokenIcon";
-import { DownOutlined } from "@ant-design/icons";
 import Popover from "antd/es/popover";
 import SelectToken from "../../components/token/selectToken";
 
-const INK = process.env.REACT_APP_TOKEN_INK + "";
+const REWARD = process.env.REACT_APP_TOKEN_REWARD + "";
 const USDT = process.env.REACT_APP_TOKEN_USDT + "";
 const factroryAddr = process.env.REACT_APP_FACTORY + "";
 const routerAddr: any = process.env.REACT_APP_ROUTER + "";
@@ -43,7 +41,7 @@ function Swap() {
 
   const [tokenOut, setTokenOut] = useState<ITokenData>({
     amount: '',
-    token: INK,
+    token: REWARD,
     amountView: '',
   });
 
