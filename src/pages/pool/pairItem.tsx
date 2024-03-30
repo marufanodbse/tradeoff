@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import BigNumber from "bignumber.js";
-import { fromTokenValue, trimNumber } from "../../utils";
+import { fromTokenValue, removeTrailingZeros, trimNumber } from "../../utils";
 import { useNavigate } from "react-router-dom";
 import { useGlobal } from "../../context/GlobalProvider";
 import { fetchBalanceObj, getReadData } from "../../config/api";
@@ -124,7 +124,7 @@ function PairItem({ pairaddr }: IPairItem) {
                         <div className="flex ">
                         <div className="flex-1">您的流动池份额:</div>
                             <div>
-                                {accountPairAmount == "0" ? 0 : new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toFixed(3)}%
+                                {accountPairAmount == "0" ? 0 :removeTrailingZeros(new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toNumber(), 3)}%
                             </div>
                         </div>
 

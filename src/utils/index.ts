@@ -1,12 +1,16 @@
 import BigNumber from "bignumber.js";
 export const toTokenValue = (value: any, decimals: number, mantissa?: number) => {
-    if (mantissa) return new BigNumber(value).multipliedBy(10 ** decimals).toFixed(mantissa, 1);
+    if (mantissa) return removeTrailingZeros(new BigNumber(value).multipliedBy(10 ** decimals).toNumber(), mantissa);
     return new BigNumber(value).multipliedBy(10 ** decimals).toFixed();
 }
 
 export const fromTokenValue = (value: any, decimals: number, mantissa?: number) => {
-    if (mantissa) return new BigNumber(value).dividedBy(10 ** decimals).toFixed(mantissa, 1);
+    if (mantissa) return removeTrailingZeros(new BigNumber(value).dividedBy(10 ** decimals).toNumber(), mantissa);
     return new BigNumber(value).dividedBy(10 ** decimals).toFixed();
+}
+
+export function removeTrailingZeros(number: number, len: number) {
+    return parseFloat(number.toFixed(len)).toString();
 }
 
 export const formatNumber = (value: string, digits: number) => {
@@ -68,12 +72,16 @@ export const getTime = (num: any) => {
     var date = new Date(num * 1000);
     let Y = date.getFullYear() + '/';
     let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/';
-    let D = date.getDate() + ' ';
-    let h = date.getHours() + ':';
-    let m = date.getMinutes();
-    //    let  m = date.getMinutes() + ':';
+    // let D = date.getDate() + ' ';
+    let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+    // let h = date.getHours() + ':';
+    let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+    // let m = date.getMinutes();
+    let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
     //    let s = date.getSeconds();
-    return Y + M + D + h + m
+    //    let s = date.getSeconds();
+    let s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+    return Y + M + D + h + m + s
 }
 
 export function formatAccount(value: any, lenStart: number, lenEnd: number) {

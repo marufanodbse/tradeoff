@@ -358,8 +358,8 @@ function RemovePool() {
             兑换率:
           </div>
           <div className="flex-1 text-right">
-            <p>1 <TokenName tokenAddr={tokenA} /> ={fromTokenValue(tokenAtoTokenB, Number(tokenBDecimals), 6)} <TokenName tokenAddr={tokenB} /></p>
-            <p>1 <TokenName tokenAddr={tokenB} /> ={fromTokenValue(tokenBtoTokenA, Number(tokenADecimals), 6)} <TokenName tokenAddr={tokenA} /></p>
+            <p>1 <TokenName tokenAddr={tokenA} /> ={fromTokenValue(tokenAtoTokenB, Number(tokenBDecimals), 3)} <TokenName tokenAddr={tokenB} /></p>
+            <p>1 <TokenName tokenAddr={tokenB} /> ={fromTokenValue(tokenBtoTokenA, Number(tokenADecimals), 3)} <TokenName tokenAddr={tokenA} /></p>
           </div>
         </div>
 

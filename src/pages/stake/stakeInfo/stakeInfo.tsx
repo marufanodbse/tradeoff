@@ -25,7 +25,7 @@ function StakeInfo() {
     const [rewardAmount, setRewardAmount] = useState<string>("0");
     const [stakeAmount, setStakeAmount] = useState<string>("0");
     const [releaseAmount, setReleaseAmount] = useState<string>("0");
-
+    const [stakeDuration, setStakeDuration] = useState<string>("0");
     const [pageIndex, setPageIndex] = useState<string>("1");
     const [pageCount, setPageCount] = useState<string>("1000000");
 
@@ -43,8 +43,19 @@ function StakeInfo() {
         getRewardValue()
         getStakeRecords(pageIndex)
         getStakeRecordInfo()
+        getStakeDuration()
     }
+    // stakeDuration
 
+    const getStakeDuration = async () => {
+        let { data, code }: IResponse = await getReadData("stakeDuration", usdtStakeABI, StakeAddr, [], account);
+        console.log("getStakeDuration", data)
+        if (code == 200) {
+            setStakeDuration(data)
+        } else {
+            setStakeDuration("0")
+        }
+    }
     // stakeRecordInfo
 
     const getStakeRecordInfo = async () => {
@@ -244,7 +255,10 @@ function StakeInfo() {
                             <span className=' ml-2 font-bold text-lg'>{fromTokenValue(releaseAmount, 18, 2)}</span>
                         </div>
                         <div>
-                            <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
+                            {
+                                new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0' style={{ width: "100px" }} > 解押</div> : <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
+                            }
+
                         </div>
                     </div>
                     <div className='flex leading-8  mb-3'>
@@ -253,18 +267,22 @@ function StakeInfo() {
                             <span className=' ml-2 font-bold text-lg'>{fromTokenValue(rewardAmount, 18, 2)}</span>
                         </div>
                         <div>
-                            <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
+                            {
+                                new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0' style={{ width: "100px" }} > 提取收益</div> : <div className='tradeButton p-0 ' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
+                            }
+
                         </div>
                     </div>
                 </div>
                 <div className=' mx-6 bg-white rounded-xl  mt-5 mb-8 p-3'>
-                    <div className=' flex '>
+                    <div className=' text-center  text-man font-bold text-lg'> 质押记录</div>
+                    {/* <div className=' flex '>
                         <div className=' flex-1'>金额</div>
                         <div className='  w-36'>解锁时间</div>
                         <div className='w-20'>状态</div>
-                    </div>
+                    </div> */}
                     <div className=' pt-4 min-h-[150px] max-h-[270px] overflow-scroll'>
-                        {
+                        {/* {
                             stakeList && stakeList.map((item: any, index: number) => {
                                 return <div key={index} className=' flex text-sm pb-2 '>
                                     <div className='flex-1 leading-8'>{fromTokenValue(item.value, 18, 2)}</div>
@@ -272,8 +290,14 @@ function StakeInfo() {
                                     <div className=' w-20 text-center'><StakeItemState releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} /></div>
                                 </div>
                             })
+                        } */}
+                        {
+                            stakeList && stakeList.map((item: any, index: number) => {
+                                return <StakeItemState value={item.value} releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} stakeDuration={stakeDuration} />
+                            })
                         }
                     </div>
+
                     {/* <div className=' flex pt-3'>
                         <div>
                             <div className={`${pageIndex == "1" ? "tradeButtonGray" : "tradeButton"}   py-1 px-3`} onClick={() => {
@@ -306,11 +330,14 @@ export default StakeInfo
 interface IStakeItemState {
     releaseTime: any,
     unStakeId: any,
+    value: any,
+    stakeDuration: any
 }
 
-function StakeItemState({ releaseTime, unStakeId }: IStakeItemState) {
+function StakeItemState({ value, releaseTime, unStakeId, stakeDuration }: IStakeItemState) {
     const { account } = useGlobal();
     const [state, setState] = useState<number>(1);
+    const [unStakeTime, setUnStakeTime] = useState<any>("0");
     useEffect(() => {
         getState(releaseTime, unStakeId)
     })
@@ -327,6 +354,8 @@ function StakeItemState({ releaseTime, unStakeId }: IStakeItemState) {
         } else {
             try {
                 let { data, code }: IResponse = await getReadData("unstakeRecord", usdtStakeABI, StakeAddr, [stakeId], account);
+                console.log("unstakeRecord", data)
+                setUnStakeTime(data.unstakeTime)
                 if (code == 200) {
                     if (data.finished) {
                         setState(3)
@@ -341,38 +370,68 @@ function StakeItemState({ releaseTime, unStakeId }: IStakeItemState) {
             }
         }
     }
-
+    // border border-[#cc4a4a] rounded-3xl
     const getHtml = (num: Number) => {
         let html: ReactElement = <></>
         if (num == 1) {
-            html = <div className='  flex border border-[#cc4a4a] rounded-3xl py-1 px-1'>
-                <img className=' w-5 h-5' src={lockEdIcon} alt="" />
-                <p className=' pl-1'>已解锁</p>
+            html = <div className='  flex '>
+                <img className=' w-4 h-4' src={lockEdIcon} alt="" />
+                <p className=' px-1'>已解锁</p>
             </div>
         } else if (num == 2) {
-            html = <div className='  flex border border-[#cc4a4a] rounded-3xl py-1 px-1'>
-                <img className=' w-5 h-5' src={lockIcon} alt="" />
-                <p className=' pl-1'>锁定中</p>
+            html = <div className='  flex  '>
+                <img className=' w-4 h-4' src={lockIcon} alt="" />
+                <p className=' px-1'>锁定中</p>
             </div>
         } else if (num == 3) {
-            html = <div className='  flex border border-[#cc4a4a] rounded-3xl py-1 px-1'>
-                <img className=' w-5 h-5' src={checkIcon} alt="" />
-                <p className=' pl-1'>已完成</p>
+            html = <div className='  flex  '>
+                <img className=' w-4 h-4' src={checkIcon} alt="" />
+                <p className=' px-1'>已完成</p>
             </div>
         } else if (num == 4) {
-            html = <div className='  flex border border-[#cc4a4a] rounded-3xl py-1 px-1'>
-                <img className=' w-5 h-5' src={changeIcon} alt="" />
-                <p className=' pl-1'>处理中</p>
+            html = <div className='  flex '>
+                <img className=' w-4 h-4' src={changeIcon} alt="" />
+                <p className=' px-1'>处理中</p>
             </div>
         }
-
         return html
     }
 
-    return <div>
-        {
-            state && getHtml(state)
-        }
+    return <div className=' text-xs border border-[#cc4a4a] rounded-xl py-2 px-3 mb-1'>
+        <div className=' flex'>
+            <div className=' w-1/2'>
+                <p>
+                    <span className='text-gray-500 pr-1'>质押金额:</span>
+                    {fromTokenValue(value, 18, 2)}
+                </p>
+            </div>
+            <div className=' w-1/2 flex'>
+                <p className=' '>
+                    <span className='text-gray-500 pr-1'>当前状态:</span>
+                </p>
+                {
+                    state && getHtml(state)
+                }
+            </div>
+        </div>
+        <div>
+            <p>
+                <span className='text-gray-500 pr-1'> 质押时间:</span>
+                {getTime(new BigNumber(releaseTime).minus(stakeDuration).toNumber())}
+            </p>
+        </div>
+        <div>
+            <p>
+                <span className='text-gray-500 pr-1'>
+                    {
+                        state == 3 || state == 4 ? "退出" : "解锁"
+                    }
+                    时间:</span>
+                {
+                    state == 3 || state == 4 ? getTime(new BigNumber(unStakeTime).toNumber()) : getTime(new BigNumber(releaseTime).toNumber())
+                }
+            </p>
+        </div>
     </div>
 }
 

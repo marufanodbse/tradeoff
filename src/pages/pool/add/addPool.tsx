@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import TokenName from "../../../components/token/TokenName";
 import { IResponse, fetchBalanceObj, getReadData, sendStatus } from "../../../config/api";
 import { erc20ABI, factoryABI, pairABI, routerABI } from "../../../abi/abi";
-import { fromTokenValue, toTokenValue, trimNumber } from "../../../utils";
+import { fromTokenValue, removeTrailingZeros, toTokenValue, trimNumber } from "../../../utils";
 import BigNumber from "bignumber.js";
 import { prepareWriteContract } from "wagmi/actions";
 import { maxInt256, zeroAddress } from "viem";
@@ -482,7 +482,7 @@ function AddPool() {
           <div className="flex  text-sm">
             <div className="flex-1">您的流动池份额:</div>
             <div>
-              {accountPairAmount == "0" ? 0 : new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toFixed(3)}%
+              {accountPairAmount == "0" ? 0 : removeTrailingZeros(new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toNumber(), 3)}%
             </div>
           </div>
           <div className="flex  text-sm">

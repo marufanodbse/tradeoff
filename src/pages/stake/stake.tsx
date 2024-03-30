@@ -10,11 +10,13 @@ import { fetchBalanceObj, sendStatus } from '../../config/api'
 import { maxInt256 } from 'viem'
 import TipPop from '../../components/pop/TipPop'
 import Head from '../../components/head'
+import { useNavigate } from 'react-router-dom'
 
 let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 function Stake() {
     const { account } = useGlobal()
+    const navigate = useNavigate();
     const [stakeAmount, setStakeAmount] = useState<string>("")
 
     const [tipOpen, setTipOpen] = useState<boolean>(false);
@@ -106,6 +108,7 @@ function Stake() {
         setTipOpenState("success")
         setTipOpenText("交易成功")
         setTimeout(() => {
+            navigate('/myStake')
             setTipOpen(false)
             setTipOpenState("")
         }, 2000);
@@ -137,11 +140,9 @@ function Stake() {
                         <div className=' flex-1  mt-3 text-gray-500'>
                             <div className='text-sm flex'>
                                 <p className=' flex-1 text-right '>lock-up period: 100 day</p>
-                                {/* <p className=' w-20'> </p> */}
                             </div>
                             <div className='text-sm flex'>
                                 <p className=' flex-1 text-right'>  Date: 2022.3.4-2022.6.10</p>
-                                {/* <p className=' w-20'></p> */}
                             </div>
                         </div>
                     </div>

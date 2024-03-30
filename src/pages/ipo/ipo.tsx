@@ -11,16 +11,16 @@ import BigNumber from "bignumber.js";
 import { maxInt256 } from 'viem';
 import TokenName from '../../components/token/TokenName';
 import { menuLogo } from '../../image';
+import { useNavigate } from 'react-router-dom';
+import { removeTrailingZeros } from '../../utils';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 let rewardAddr: any = process.env.REACT_APP_TOKEN_INK + ""
 
-// let IpoAddr: any = "0x72026A3Ac663af43a3FAE076BC0D893C72cD8Ec2"
-// let UsdtAddr: any ="0xa2e3ec5Fa64f64AF91580D509D21Cd42DbF34545"
-
 function Ipo() {
     const { account } = useGlobal()
+    const navigate = useNavigate();
     const [ipoAmount, setIpoAmount] = useState<string>("")
 
     const [tipOpen, setTipOpen] = useState<boolean>(false);
@@ -144,16 +144,25 @@ function Ipo() {
                     <div className=' flex-1  mt-3 text-gray-500'>
                         <div className='text-sm flex'>
                             <p className=' flex-1 text-right '>  首期IPO价格:</p>
-                            <p className=' w-20'>
+                            <p className=' w-20 text-right'>
                                 0.4USDT</p>
                         </div>
                         <div className='text-sm flex'>
                             <p className=' flex-1 text-right'>  IPO总量:</p>
-                            <p className=' w-20'>
+                            <p className=' w-20 text-right'>
                                 500万TRO
                             </p>
                         </div>
                     </div>
+
+                    {/* <div className=' flex-1  mt-3 text-gray-500'>
+                        <div className='text-sm flex'>
+                            <p className=' flex-1 text-right '>首期IPO价格: 0.4 USDT</p>
+                        </div>
+                        <div className='text-sm flex'>
+                            <p className=' flex-1 text-right'> IPO总量: 500万 TRO</p>
+                        </div>
+                    </div> */}
                 </div>
                 <div className='px-8'>
                     <div className=' pt-5 pb-2'>
@@ -164,9 +173,10 @@ function Ipo() {
                         }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                     </div>
                     <div className=' text-xs mb-3 text-right text-gray-500'>
-                        能得到的 
-                        { new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : new BigNumber(ipoAmount).dividedBy(10).multipliedBy(4).toFixed(3)}
-                        <TokenName tokenAddr={rewardAddr + ""} />
+                        能得到的
+                        {new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : removeTrailingZeros(new BigNumber(ipoAmount).dividedBy(4).multipliedBy(10).toNumber(), 3)}
+                        {/* <TokenName tokenAddr={rewardAddr + ""} /> */}
+                        TRO
                     </div>
                     <div className=' pb-5'>
                         <div className='tradeButton py-2' onClick={() => {
