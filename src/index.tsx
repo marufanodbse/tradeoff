@@ -5,14 +5,14 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 import '@rainbow-me/rainbowkit/styles.css';
-import { Chain, darkTheme, getDefaultWallets, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { Chain, connectorsForWallets, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   bsc, bscTestnet
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import App from './App';
-
+import { metaMaskWallet, okxWallet, imTokenWallet, tokenPocketWallet, rainbowWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
 import GlobalProvider from './context/GlobalProvider';
 let net = process.env.REACT_APP_NetWork + ""
 
@@ -37,6 +37,7 @@ const INK: Chain = {
   }
 };
 
+let projectId = "ae6db5c9c381306507026b30055a5bbe"
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
@@ -46,11 +47,18 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 console.log("net", net)
-const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit demo',
-  projectId: 'YOUR_PROJECT_ID',
-  chains,
-});
+
+const connectors = connectorsForWallets([
+  {
+    groupName: 'Popular',
+    wallets: [
+      metaMaskWallet({ projectId, chains }),
+      rainbowWallet({ projectId, chains }),
+      walletConnectWallet({ projectId, chains }),
+      tokenPocketWallet({ projectId, chains })
+    ],
+  },
+]);
 
 const wagmiConfig = createConfig({
   autoConnect: true,
