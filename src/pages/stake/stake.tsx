@@ -11,8 +11,9 @@ import { maxInt256, zeroAddress } from 'viem'
 import TipPop from '../../components/pop/TipPop'
 import Head from '../../components/head'
 import { useNavigate } from 'react-router-dom'
-import { Modal } from 'antd'
-
+import { Modal, Select } from 'antd'
+import { getTimePeriod } from '../../utils'
+const { Option } = Select;
 let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 function Stake() {
@@ -29,6 +30,8 @@ function Stake() {
 
     const [isTop, setIsTop] = useState<boolean>(false);
     const [invitersAddress, setInvitersAddress] = useState<string>("");
+
+    const [stakeType, setStakeType] = useState<string>("0");
 
     useEffect(() => {
         init()
@@ -121,7 +124,7 @@ function Stake() {
                 address: StakeAddr,
                 abi: usdtStakeABI,
                 functionName: 'stake',
-                args: [sendAmount],
+                args: [sendAmount, stakeType],
             })
             console.log("stakeConfig", stakeConfig)
 
@@ -201,6 +204,17 @@ function Stake() {
         }
     }
 
+    const selectBefore = (
+        <Select value={stakeType} onChange={(e) => {
+            console.log(e)
+            setStakeType(e)
+        }}>
+            <Option value="0">90 天</Option>
+            <Option value="1">180 天</Option>
+            <Option value="2">360 天</Option>
+        </Select>
+    );
+
     return (
         <div>
             <Head />
@@ -233,22 +247,22 @@ function Stake() {
                 </div>
 
                 <div className='mx-6 rounded-xl bg-white'>
-                    <div className='px-8 pt-4 pb-4 border-b border-[#ccc] flex'>
+                    <div className='px-4 pt-4 pb-4 border-b border-[#ccc] flex'>
                         <div className=' bg-1 h-16 w-16 rounded-full'>
                             <img className=' w-16 h-16 p-3' src={menuLogo} alt="" />
                         </div>
                         <div className=' flex-1  mt-3 text-gray-500'>
                             <div className='text-sm flex'>
-                                <p className=' flex-1 text-right '>lock-up period: 100 day</p>
+                                <p className=' flex-1 text-right '>lock-up period: {stakeType == "0" ? 90 : stakeType == "1" ? 180 : 360} day</p>
                             </div>
                             <div className='text-sm flex'>
-                                <p className=' flex-1 text-right'>  Date: 2022.3.4-2022.6.10</p>
+                                <p className=' flex-1 text-right'>  Date: {getTimePeriod(stakeType == "0" ? 90 : stakeType == "1" ? 180 : 360)}</p>
                             </div>
                         </div>
                     </div>
-                    <div className='px-8'>
+                    <div className='px-4'>
                         <div className=' pt-5 pb-2'>
-                            <Input value={stakeAmount} onChange={(e) => {
+                            <Input addonBefore={selectBefore} value={stakeAmount} onChange={(e) => {
                                 console.log(e.target.value)
                                 let valueNum = verifyNum(e.target.value)
                                 setStakeAmount(valueNum)

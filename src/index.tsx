@@ -8,7 +8,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { Chain, darkTheme, getDefaultWallets, lightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
-  bsc,bscTestnet
+  bsc, bscTestnet
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import App from './App';
@@ -16,11 +16,31 @@ import App from './App';
 import GlobalProvider from './context/GlobalProvider';
 let net = process.env.REACT_APP_NetWork + ""
 
+const INK: Chain = {
+  id: 54321,
+  name: 'INK TestNet',
+  network: 'INK TestNet',
+  iconUrl: null,
+  iconBackground: '#fff',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: { http: ['https://gethdev.inkfinance.xyz'] },
+    public: { http: ['https://gethdev.inkfinance.xyz'] },
+  },
+  blockExplorers: {
+    etherscan: { name: 'BscScan', url: "https://exploredev.inkfinance.xyz" },
+    default: { name: 'BscScan', url: "https://exploredev.inkfinance.xyz" },
+  }
+};
 
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    bscTestnet
+    net == "INK" ? INK : net == "BSCTEST" ? bscTestnet : bsc,
   ],
   [publicProvider()]
 );

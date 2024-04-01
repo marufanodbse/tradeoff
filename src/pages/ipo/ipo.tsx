@@ -10,7 +10,7 @@ import { useGlobal } from '../../context/GlobalProvider';
 import BigNumber from "bignumber.js";
 import { maxInt256, zeroAddress } from 'viem';
 import { menuLogo } from '../../image';
-import { fromTokenValue, removeTrailingZeros } from '../../utils';
+import { fromTokenValue, removeTrailingZeros, toTokenValue } from '../../utils';
 import { Modal } from 'antd';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
@@ -34,6 +34,7 @@ function Ipo() {
 
     const [shareAddr, setShareAddrAddr] = useState<string>("")
 
+    const [totalUsdtAmount, setTotalUsdtAmount] = useState<string>("0")
 
     useEffect(() => {
         getManager()
@@ -43,6 +44,15 @@ function Ipo() {
     const init = () => {
         getInviters()
         getValues()
+        // getTotalUsdtAmount()
+    }
+
+    const getTotalUsdtAmount = async () => {
+        let { data, code }: IResponse = await getReadData("totalUsdtAmount", ipoABI, IpoAddr, [], account);
+        console.log("getTotalUsdtAmount", data, code)
+        if (code == 200) {
+            setTotalUsdtAmount(data.toString())
+        }
     }
 
     //values
@@ -236,6 +246,26 @@ function Ipo() {
     }
 
 
+    const getOutHtml = (joinAmount: any) => {
+        let num = "0";
+        let amount = toTokenValue(joinAmount, 18);
+        let firstAmount = toTokenValue(200000, 18)
+        if (new BigNumber(totalUsdtAmount).plus(amount).isLessThanOrEqualTo(firstAmount)) {
+            num = removeTrailingZeros(new BigNumber(joinAmount).multipliedBy(10).toNumber(), 3)
+        } else {
+            if (new BigNumber(totalUsdtAmount).isLessThan(firstAmount)) {
+                let lessAmount = new BigNumber(new BigNumber(firstAmount).minus(totalUsdtAmount).toString()).multipliedBy(10).toString();
+                let greaterAmount = new BigNumber(new BigNumber(totalUsdtAmount).plus(amount).minus(firstAmount).toString()).multipliedBy(5).toString();
+
+                num = removeTrailingZeros(new BigNumber(fromTokenValue(lessAmount, 18)).plus(fromTokenValue(greaterAmount, 18)).toNumber(), 3)
+
+            } else {
+                num = removeTrailingZeros(new BigNumber(joinAmount).multipliedBy(5).toNumber(), 3)
+            }
+        }
+
+        return num
+    }
 
     return (<div>
         <Head />
@@ -270,25 +300,20 @@ function Ipo() {
                 <p className=' text-center font-bold text-2xl mb-6'>IPO</p>
             </div>
             <div className='mx-6 rounded-xl bg-white'>
-                <div className='px-8 pt-4 pb-4 border-b border-[#ccc] flex'>
+                <div className='px-4 pt-4 pb-4 border-b border-[#ccc] flex'>
                     <div className=' bg-1 h-16 w-16 rounded-full'>
                         <img className=' w-16 h-16 p-3' src={menuLogo} alt="" />
                     </div>
                     <div className=' flex-1  mt-3 text-gray-500'>
                         <div className='text-sm flex'>
-                            <p className=' flex-1 text-right '>  首期IPO价格:</p>
-                            <p className=' w-20 text-right'>
-                                0.4USDT</p>
+                            <p className=' flex-1 text-right '> 第一批IPO价格0.1USDT,数量200万</p>
                         </div>
                         <div className='text-sm flex'>
-                            <p className=' flex-1 text-right'>  IPO总量:</p>
-                            <p className=' w-20 text-right'>
-                                500万TRO
-                            </p>
+                            <p className=' flex-1 text-right '> 第二批IPO价格0.2USDT,数量300万</p>
                         </div>
                     </div>
                 </div>
-                <div className='px-8'>
+                <div className='px-4'>
                     <div className=' pt-5 pb-2'>
                         <Input value={ipoAmount} onChange={(e) => {
                             console.log(e.target.value)
@@ -297,10 +322,7 @@ function Ipo() {
                         }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                     </div>
                     <div className=' text-xs mb-3 text-right text-gray-500'>
-                        能得到的
-                        {new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : removeTrailingZeros(new BigNumber(ipoAmount).dividedBy(4).multipliedBy(10).toNumber(), 3)}
-                        {/* <TokenName tokenAddr={rewardAddr + ""} /> */}
-                        TRO
+                        获取 {new BigNumber(ipoAmount).isZero() || ipoAmount == "" ? "0" : getOutHtml(ipoAmount)} TRO 锁定1年线性释放
                     </div>
                     <div className=' pb-3'>
                         <div className='tradeButton py-2' onClick={() => {
@@ -328,7 +350,7 @@ function Ipo() {
                     </div>
                 </div>
 
-                <div className=' px-8 text-sm pt-2 pb-3'>
+                <div className=' px-4 text-sm pt-2 pb-3'>
                     <div>
                         <p>
                             <span className='text-gray-500 pr-1'> 可获得总量:</span>

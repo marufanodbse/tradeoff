@@ -23,14 +23,13 @@ interface OpenStatus {
 
 const REWARD = process.env.REACT_APP_TOKEN_REWARD + "";
 const USDT = process.env.REACT_APP_TOKEN_USDT + "";
-const FREE = process.env.REACT_APP_TOKEN_FREE + "";
 function TokenCyPop({ open, setOpen, tokenType, tokenIn, setTokenIn, tokenOut, setTokenOut, linkType, linkTokenA, linkTokenB, setTokenA, setTokenB }: OpenStatus) {
     const navigate = useNavigate();
     const { account } = useGlobal()
     const [type, setType] = useState<boolean>(false);
     const [typeManger, setTypeManger] = useState<boolean>(true);
     const [localData, setLocalData] = useState<any>([]);
-    const [tokenList, setTopkenList] = useState<any>([REWARD, USDT, FREE])
+    const [tokenList, setTopkenList] = useState<any>([REWARD, USDT])
 
     const handleCy = (item: any) => {
         if (tokenOut && setTokenOut && setTokenIn && tokenIn) {

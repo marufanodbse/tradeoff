@@ -64,21 +64,6 @@
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "QueueEmpty",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "QueueFull",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "QueueOutOfBounds",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -147,13 +132,82 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "dayReward",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "_lastKyes",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "_stakeRecords",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "next_stake_release",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "_unstakeRecords",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "unstakeTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "finished",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -177,11 +231,6 @@
         "internalType": "address",
         "name": "_rewardToken",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_stakeDuration",
-        "type": "uint256"
       },
       {
         "internalType": "address",
@@ -274,6 +323,25 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "powerAddMaps",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "user",
         "type": "address"
@@ -350,19 +418,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_stakeDuration",
-        "type": "uint256"
-      }
-    ],
-    "name": "setStakeDuration",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_user",
         "type": "address"
@@ -379,6 +434,11 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "stakeType",
+        "type": "uint8"
       }
     ],
     "name": "stake",
@@ -388,12 +448,12 @@
   },
   {
     "inputs": [],
-    "name": "stakeDuration",
+    "name": "stakeDays",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "uint64",
         "name": "",
-        "type": "uint256"
+        "type": "uint64"
       }
     ],
     "stateMutability": "view",
@@ -411,22 +471,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "stakeAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
+        "name": "releaseAmount",
         "type": "uint256"
       }
     ],
@@ -439,16 +489,6 @@
         "internalType": "address",
         "name": "user",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "skip",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "count",
-        "type": "uint256"
       }
     ],
     "name": "stakeRecords",
@@ -461,22 +501,22 @@
             "type": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "releaseTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "addition",
-            "type": "uint256"
-          },
-          {
             "internalType": "bytes32",
             "name": "unStakeId",
             "type": "bytes32"
+          },
+          {
+            "internalType": "uint64",
+            "name": "stakeTime",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "releaseTime",
+            "type": "uint64"
           }
         ],
-        "internalType": "struct IUsdtStake.StakeRecord[]",
+        "internalType": "struct IUsdtStake.StakeInfo[]",
         "name": "datas",
         "type": "tuple[]"
       }
@@ -508,6 +548,25 @@
     "name": "transferOwnership",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "unStakeIds",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -559,7 +618,18 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "skip",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "count",
+        "type": "uint256"
+      }
+    ],
     "name": "unstakeRecords",
     "outputs": [
       {
@@ -587,6 +657,37 @@
         ],
         "internalType": "struct IUsdtStake.UnstakeRecord[]",
         "name": "datas",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "valueList",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "prevIndex",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ValueListV2.Value[]",
+        "name": "rets",
         "type": "tuple[]"
       }
     ],

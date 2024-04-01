@@ -25,12 +25,7 @@ function StakeInfo() {
     const [rewardAmount, setRewardAmount] = useState<string>("0");
     const [stakeAmount, setStakeAmount] = useState<string>("0");
     const [releaseAmount, setReleaseAmount] = useState<string>("0");
-    const [stakeDuration, setStakeDuration] = useState<string>("0");
-    const [pageIndex, setPageIndex] = useState<string>("1");
-    const [pageCount, setPageCount] = useState<string>("1000000");
 
-    // uint endIndex,
-    // uint addition
     const [stakeList, setStakeList] = useState<any>([])
     useEffect(() => {
         if (account) {
@@ -41,21 +36,10 @@ function StakeInfo() {
     const init = () => {
         getPowerOf()
         getRewardValue()
-        getStakeRecords(pageIndex)
+        getStakeRecords()
         getStakeRecordInfo()
-        getStakeDuration()
     }
-    // stakeDuration
 
-    const getStakeDuration = async () => {
-        let { data, code }: IResponse = await getReadData("stakeDuration", usdtStakeABI, StakeAddr, [], account);
-        console.log("getStakeDuration", data)
-        if (code == 200) {
-            setStakeDuration(data)
-        } else {
-            setStakeDuration("0")
-        }
-    }
     // stakeRecordInfo
 
     const getStakeRecordInfo = async () => {
@@ -90,11 +74,8 @@ function StakeInfo() {
         }
     }
     // stakeRecords
-    const getStakeRecords = async (index: any) => {
-        setPageIndex(index)
-        let start = new BigNumber(new BigNumber(index).minus(1).toString()).multipliedBy(pageCount).toString();
-        let end = new BigNumber(index).multipliedBy(pageCount).toString()
-        let { data, code }: IResponse = await getReadData("stakeRecords", usdtStakeABI, StakeAddr, [account, start, end], account);
+    const getStakeRecords = async () => {
+        let { data, code }: IResponse = await getReadData("stakeRecords", usdtStakeABI, StakeAddr, [account], account);
         if (code == 200) {
             let Arr: any = []
             for (let index = 0; index < data.length; index++) {
@@ -102,12 +83,13 @@ function StakeInfo() {
                 let obj = {
                     value: "0",
                     releaseTime: "0",
-                    addition: "0",
+                    stakeTime: "0",
                     unStakeId: "",
                 }
+               
                 obj.value = element.value;
                 obj.releaseTime = element.releaseTime;
-                obj.addition = element.addition;
+                obj.stakeTime = element.stakeTime;
                 if (index === 0) {
                     obj.unStakeId = element.unStakeId
                 } else {
@@ -119,10 +101,7 @@ function StakeInfo() {
                 }
                 Arr.push(obj)
             }
-            console.log("getStakeRecords arr", Arr)
-            console.log("getStakeRecords data", data)
             setStakeList([...Arr])
-
         } else {
             setStakeList([])
         }
@@ -274,49 +253,14 @@ function StakeInfo() {
                 </div>
                 <div className=' mx-6 bg-white rounded-xl  mt-5 mb-8 p-3'>
                     <div className=' text-center  text-man font-bold text-lg'> 质押记录</div>
-                    {/* <div className=' flex '>
-                        <div className=' flex-1'>金额</div>
-                        <div className='  w-36'>解锁时间</div>
-                        <div className='w-20'>状态</div>
-                    </div> */}
                     <div className=' pt-4 min-h-[120px] max-h-[400px] overflow-scroll'>
-                        {/* {
-                            stakeList && stakeList.map((item: any, index: number) => {
-                                return <div key={index} className=' flex text-sm pb-2 '>
-                                    <div className='flex-1 leading-8'>{fromTokenValue(item.value, 18, 2)}</div>
-                                    <div className=' w-36 leading-8' >{getTime(item.releaseTime.toString())}</div>
-                                    <div className=' w-20 text-center'><StakeItemState releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} /></div>
-                                </div>
-                            })
-                        } */}
+                    
                         {
                             stakeList && stakeList.map((item: any, index: number) => {
-                                return <StakeItemState value={item.value} releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} stakeDuration={stakeDuration} />
+                                return <StakeItemState key={index} value={item.value} releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} stakeTime={item.stakeTime} />
                             })
                         }
                     </div>
-
-                    {/* <div className=' flex pt-3'>
-                        <div>
-                            <div className={`${pageIndex == "1" ? "tradeButtonGray" : "tradeButton"}   py-1 px-3`} onClick={() => {
-                                if (pageIndex == "1") {
-                                    console.log("diyiye")
-                                } else {
-                                    getStakeRecords(Number(pageIndex) - 1)
-                                }
-                            }}> 上一页</div>
-                        </div>
-                        <div className=' flex-1 text-center'>{pageIndex} </div>
-                        <div>
-                            <div className={`${new BigNumber(stakeList.length).isLessThan(pageCount) ? "tradeButtonGray" : "tradeButton"}   py-1 px-3`} onClick={() => {
-                                if (new BigNumber(stakeList.length).isLessThan(pageCount)) {
-                                    console.log("最后一页")
-                                } else {
-                                    getStakeRecords(Number(pageIndex) + 1)
-                                }
-                            }}> 下一页</div>
-                        </div>
-                    </div> */}
                 </div>
             </div>
         </div>
@@ -329,10 +273,10 @@ interface IStakeItemState {
     releaseTime: any,
     unStakeId: any,
     value: any,
-    stakeDuration: any
+    stakeTime: any
 }
 
-function StakeItemState({ value, releaseTime, unStakeId, stakeDuration }: IStakeItemState) {
+function StakeItemState({ value, releaseTime, unStakeId, stakeTime }: IStakeItemState) {
     const { account } = useGlobal();
     const [state, setState] = useState<number>(1);
     const [unStakeTime, setUnStakeTime] = useState<any>("0");
@@ -368,7 +312,6 @@ function StakeItemState({ value, releaseTime, unStakeId, stakeDuration }: IStake
             }
         }
     }
-    // border border-[#cc4a4a] rounded-3xl
     const getHtml = (num: Number) => {
         let html: ReactElement = <></>
         if (num == 1) {
@@ -415,7 +358,7 @@ function StakeItemState({ value, releaseTime, unStakeId, stakeDuration }: IStake
         <div>
             <p>
                 <span className='text-gray-500 pr-1'> 质押时间:</span>
-                {getTime(new BigNumber(releaseTime).minus(stakeDuration).toNumber())}
+                {getTime(new BigNumber(stakeTime).toNumber())}
             </p>
         </div>
         <div>

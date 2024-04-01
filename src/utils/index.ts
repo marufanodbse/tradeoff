@@ -72,17 +72,26 @@ export const getTime = (num: any) => {
     var date = new Date(num * 1000);
     let Y = date.getFullYear() + '/';
     let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '/';
-    // let D = date.getDate() + ' ';
     let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
-    // let h = date.getHours() + ':';
     let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
-    // let m = date.getMinutes();
     let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
-    //    let s = date.getSeconds();
-    //    let s = date.getSeconds();
     let s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
     return Y + M + D + h + m + s
 }
+
+export const getTimePeriod = (num: any) => {
+    var date = new Date();
+    let Y = date.getFullYear() + '.';
+    let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '.';
+    let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate());
+    var date1 = new Date(new BigNumber(new Date().getTime()).plus(new BigNumber(num).multipliedBy(86400000).toString()).toNumber());
+    let Y1 = date1.getFullYear() + '.';
+    let M1 = (date1.getMonth() + 1 < 10 ? '0' + (date1.getMonth() + 1) : date1.getMonth() + 1) + '.';
+    let D1 = (date1.getDate() < 10 ? '0' + date1.getDate() : date1.getDate());
+
+    return Y + M + D + "-" + Y1 + M1 + D1
+}
+
 
 export function formatAccount(value: any, lenStart: number, lenEnd: number) {
     if (!value) { return ""; }
