@@ -6,11 +6,11 @@ import { useGlobal } from '../../context/GlobalProvider'
 import { prepareWriteContract } from 'wagmi/actions'
 import { erc20ABI, usdtStakeABI } from '../../abi/abi'
 import BigNumber from "bignumber.js";
-import { IResponse, fetchBalanceObj, getReadData, sendStatus } from '../../config/api'
+import { IResponse, fetchBalanceObj, getReadData, isAddress, sendStatus } from '../../config/api'
 import { maxInt256, zeroAddress } from 'viem'
 import TipPop from '../../components/pop/TipPop'
 import Head from '../../components/head'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Modal, Select } from 'antd'
 import { getTimePeriod } from '../../utils'
 const { Option } = Select;
@@ -19,6 +19,8 @@ let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 function Stake() {
     const { account } = useGlobal()
     const navigate = useNavigate();
+    const params = useParams()
+
     const [stakeAmount, setStakeAmount] = useState<string>("")
 
     const [tipOpen, setTipOpen] = useState<boolean>(false);
@@ -33,13 +35,40 @@ function Stake() {
 
     const [stakeType, setStakeType] = useState<string>("0");
 
+    const [shareAddr, setShareAddr] = useState<string>("");
+
     useEffect(() => {
         init()
+        if (params.shareAddress) {
+            if (isAddress(params.shareAddress) && params.shareAddress !== zeroAddress) {
+                setShareAddr(params.shareAddress)
+            } else {
+                setShareAddr("")
+            }
+        } else {
+            setShareAddr("")
+        }
     }, [account])
+
     const init = async () => {
         getIsTopers()
         getInviters()
     }
+
+    useEffect(() => {
+        if (isTop || invitersAddress !== zeroAddress) {
+            setRegisterOpen(false)
+            setRegisterAddress("")
+        } else {
+            if (shareAddr !== "") {
+                setRegisterAddress(shareAddr)
+                setRegisterOpen(true)
+            } else {
+                setRegisterOpen(false)
+                setRegisterAddress("")
+            }
+        }
+    }, [isTop, invitersAddress, shareAddr])
 
     // isTopers
     const getIsTopers = async () => {

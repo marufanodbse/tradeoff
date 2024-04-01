@@ -23,21 +23,13 @@ function Head({ setOpen, isRegister }: IHead) {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [path, setPath] = useState<string>('/');
 
-  const [isTopInviter, setIsTopInviter] = useState<boolean>(false)
-  const [isHaveInviter, setIsHaveInviter] = useState<boolean>(false)
-
   useEffect(() => {
     setPath(location.pathname);
   }, [isRegister, account, location.pathname])
 
-
-
   const navLink = (url: string) => {
     navigate(url)
   }
-
-  // function inviters(address) external view returns (address);
-  // function isTopers(address) external view returns (bool);
 
   return (
     <div className=' bg-[#1f0503] border-b border-[#000] z-50 backdrop-blur-xl fixed top-0 left-0 w-full h-12 px-2'>

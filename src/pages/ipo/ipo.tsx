@@ -318,7 +318,11 @@ function Ipo() {
                         <Input value={ipoAmount} onChange={(e) => {
                             console.log(e.target.value)
                             let valueNum = verifyNum(e.target.value)
-                            setIpoAmount(valueNum)
+                            if (new BigNumber(valueNum).isGreaterThan(5000)) {
+                                setIpoAmount("5000")
+                            } else {
+                                setIpoAmount(valueNum)
+                            }
                         }} addonAfter={<span>USDT</span>} defaultValue="0.0" />
                     </div>
                     <div className=' text-xs mb-3 text-right text-gray-500'>

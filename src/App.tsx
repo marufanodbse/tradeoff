@@ -31,7 +31,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           {/* <Route path="/home/:shareAddress?" element={<Home />} /> */}
           <Route path="/home" element={<Home />} />
-          <Route path="/stake" element={<Stake />} />
+          <Route path="/stake/:shareAddress?" element={<Stake />} />
           <Route path="/myStake" element={<StakeInfo />} />
           <Route path="/ipo" element={<Ipo />} />
           <Route path="/swap" element={<Swap />} />

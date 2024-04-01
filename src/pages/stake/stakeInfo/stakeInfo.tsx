@@ -14,6 +14,9 @@ let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 const link = process.env.REACT_APP_LINK + "";
 
+const OneDay = process.env.REACT_APP_ONEDAY + "";
+
+
 function StakeInfo() {
     const { account } = useGlobal();
     const [tipOpen, setTipOpen] = useState<boolean>(false);
@@ -21,15 +24,19 @@ function StakeInfo() {
     const [tipOpenText, setTipOpenText] = useState<string>("");
 
     const [userPower, setUserPower] = useState<string>("0");
+    const [userPowerAdd, setUserPowerAdd] = useState<string>("0");
     const [allPower, setAllPower] = useState<string>("0");
     const [rewardAmount, setRewardAmount] = useState<string>("0");
     const [stakeAmount, setStakeAmount] = useState<string>("0");
     const [releaseAmount, setReleaseAmount] = useState<string>("0");
 
     const [stakeList, setStakeList] = useState<any>([])
+    const [stakeDays, setStakeDays] = useState<string>("90");
+
     useEffect(() => {
         if (account) {
             init()
+            getStakeDays()
         }
     }, [account])
 
@@ -40,7 +47,14 @@ function StakeInfo() {
         getStakeRecordInfo()
     }
 
-    // stakeRecordInfo
+    // stakeDays
+    const getStakeDays = async () => {
+        let { data, code }: IResponse = await getReadData("stakeDays", usdtStakeABI, StakeAddr, [], account);
+        console.log("getStakeDays", data)
+        if (code == 200) {
+            setStakeDays(data.toString())
+        }
+    }
 
     const getStakeRecordInfo = async () => {
         let { data, code }: IResponse = await getReadData("stakeRecordInfo", usdtStakeABI, StakeAddr, [account], account);
@@ -55,7 +69,6 @@ function StakeInfo() {
     }
     const getPowerOf = async () => {
         let { data, code }: IResponse = await getReadData("powerOf", usdtStakeABI, StakeAddr, [account], account);
-        console.log("powerOfData", data)
         if (code == 200) {
             setUserPower(data[0]);
             setAllPower(data[1])
@@ -77,7 +90,8 @@ function StakeInfo() {
     const getStakeRecords = async () => {
         let { data, code }: IResponse = await getReadData("stakeRecords", usdtStakeABI, StakeAddr, [account], account);
         if (code == 200) {
-            let Arr: any = []
+            let Arr: any = [];
+
             for (let index = 0; index < data.length; index++) {
                 const element = data[index];
                 let obj = {
@@ -86,7 +100,7 @@ function StakeInfo() {
                     stakeTime: "0",
                     unStakeId: "",
                 }
-               
+
                 obj.value = element.value;
                 obj.releaseTime = element.releaseTime;
                 obj.stakeTime = element.stakeTime;
@@ -101,7 +115,19 @@ function StakeInfo() {
                 }
                 Arr.push(obj)
             }
-            setStakeList([...Arr])
+
+            console.log(Arr)
+            setStakeList([...Arr]);
+            let powerNum = "0"
+            for (let j = 0; j < Arr.length; j++) {
+                const element = Arr[j];
+                if (element.unStakeId == MIN_UNIT256_BYTES32) {
+                    let level = new BigNumber(new BigNumber(element.releaseTime).minus(element.stakeTime).toString()).dividedBy(OneDay).dividedBy(stakeDays).toNumber()
+                    console.log("level", level, element.value)
+                    powerNum = new BigNumber(powerNum).plus(new BigNumber(element.value).multipliedBy(level == 1 ? 1 : level == 2 ? 1.5 : 2).toString()).toString()
+                }
+            }
+            setUserPowerAdd(powerNum)
         } else {
             setStakeList([])
         }
@@ -191,7 +217,9 @@ function StakeInfo() {
                     <div className='flex'>
                         <div className=" w-1/2">
                             <p className='text-man  text-sm'>我的算力</p>
-                            <p className=' font-bold text-lg'>{fromTokenValue(userPower, 18, 2)}</p>
+                            <p className=' font-bold text-lg'>
+                                {fromTokenValue(userPowerAdd, 18, 2)} + {fromTokenValue(new BigNumber(userPower).minus(userPowerAdd).toString(), 18, 2)}
+                            </p>
                         </div>
                         <div className=" w-1/2">
                             <p className='text-man  text-sm'>全网算力</p>
@@ -199,7 +227,7 @@ function StakeInfo() {
                         </div>
                     </div>
                 </div>
-                {/* <div className='mx-6  bg-white text-center rounded-xl p-3 mt-5 mb-8'>
+                <div className='mx-6  bg-white text-center rounded-xl p-3 mt-5 mb-8'>
                     <div className='font-bold text-xl flex leading-8'>
                         分享链接:
                         <div className=" flex mt-1" onClick={() => {
@@ -217,36 +245,37 @@ function StakeInfo() {
                             <img className="w-5 h-5" src={copyIcon} alt="" />
                         </div>
                     </div>
-                </div> */}
+                </div>
                 <div className=' mx-6 bg-white rounded-xl p-3'>
-                    <div className=' text-center pb-4 text-man font-bold text-lg'> 质押信息</div>
-                    <div className='flex leading-8  mb-3'>
-                        <div className=' flex-1 '>
-                            <span className='text-man  text-sm text-gray-300'>总质押:</span>
-                            <span className=' ml-2 font-bold text-lg'>{fromTokenValue(stakeAmount, 18, 2)}</span>
+                    <div className=' text-center pb-4 text-man font-bold text-lg '> 质押信息</div>
+                    <div className='flex   mb-3'>
+                        <div className=' flex-1 flex'>
+                            <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>总质押:</p>
+                            <p className=' flex-1 text-right mr-4 font-bold text-lg'>{fromTokenValue(stakeAmount, 18, 2)}</p>
                         </div>
-                        <div>
+                        <div className='  w-24'>
                         </div>
                     </div>
-                    <div className='flex leading-8  mb-3'>
-                        <div className=' flex-1 '>
-                            <span className='text-man  text-sm text-gray-300'>已释放:</span>
-                            <span className=' ml-2 font-bold text-lg'>{fromTokenValue(releaseAmount, 18, 2)}</span>
+                    <div className='flex   mb-3'>
+                        <div className=' flex-1 flex'>
+                            <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>已释放:</p>
+                            <p className=' flex-1 text-right mr-4 font-bold text-lg'>{fromTokenValue(releaseAmount, 18, 2)}</p>
                         </div>
-                        <div>
+
+                        <div className=' w-24 leading-7'>
                             {
-                                new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0' style={{ width: "100px" }} > 解押</div> : <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
+                                new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0 w-24'  > 解押</div> : <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
                             }
                         </div>
                     </div>
-                    <div className='flex leading-8  mb-3'>
-                        <div className=' flex-1 '>
-                            <span className='text-man  text-sm text-gray-300'>收益:</span>
-                            <span className=' ml-2 font-bold text-lg'>{fromTokenValue(rewardAmount, 18, 2)}</span>
+                    <div className='flex   mb-3'>
+                        <div className=' flex-1 flex'>
+                            <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>收益:</p>
+                            <p className=' flex-1 text-right mr-4 font-bold text-lg'>{fromTokenValue(rewardAmount, 18, 2)}</p>
                         </div>
-                        <div>
+                        <div className='  w-24 leading-7 text-right'>
                             {
-                                new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0' style={{ width: "100px" }} > 提取收益</div> : <div className='tradeButton p-0 ' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
+                                new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0 w-24' > 提取收益</div> : <div className='tradeButton p-0 ' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
                             }
                         </div>
                     </div>
@@ -254,7 +283,7 @@ function StakeInfo() {
                 <div className=' mx-6 bg-white rounded-xl  mt-5 mb-8 p-3'>
                     <div className=' text-center  text-man font-bold text-lg'> 质押记录</div>
                     <div className=' pt-4 min-h-[120px] max-h-[400px] overflow-scroll'>
-                    
+
                         {
                             stakeList && stakeList.map((item: any, index: number) => {
                                 return <StakeItemState key={index} value={item.value} releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} stakeTime={item.stakeTime} />
