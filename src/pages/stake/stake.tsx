@@ -300,7 +300,7 @@ function Stake() {
                         <div className=' pb-4'>
                             <p className=' text-xs py-2 text-gray-500'>3千万TRO用于USDT质押挖矿，按10年线性产出, 按质押量加权平分每天产出</p>
                         </div>
-
+                        {/* 
                         {
                             isTop || invitersAddress !== zeroAddress ? <div className=' pb-7'>
                                 <div className='tradeButton py-2' onClick={() => {
@@ -317,7 +317,12 @@ function Stake() {
                                     }, 2000);
                                 }} >Stake</div>
                             </div>
-                        }
+                        } */}
+                        <div className=' pb-7'>
+                            <div className='tradeButton py-2' onClick={() => {
+                                sendStakeApprove()
+                            }} >Stake</div>
+                        </div>
 
                         {
                             isTop || invitersAddress !== zeroAddress ? <></> : <div className=' pb-7'>
