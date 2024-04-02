@@ -250,18 +250,18 @@ function StakeInfo() {
                     <div className='flex   mb-3'>
                         <div className=' flex-1 flex'>
                             <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>总质押:</p>
-                            <p className=' flex-1 text-right mr-4 font-bold text-lg'>{fromTokenValue(stakeAmount, 18, 2)}</p>
+                            <p className=' flex-1 text-right mr-10 font-bold text-lg'>{fromTokenValue(stakeAmount, 18, 2)}</p>
                         </div>
-                        <div className='  w-24'>
+                        <div className='  w-28 text-right'>
                         </div>
                     </div>
                     <div className='flex   mb-3'>
                         <div className=' flex-1 flex'>
                             <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>已释放:</p>
-                            <p className=' flex-1 text-right mr-4 font-bold text-lg'>{fromTokenValue(releaseAmount, 18, 2)}</p>
+                            <p className=' flex-1 text-right mr-10 font-bold text-lg'>{fromTokenValue(releaseAmount, 18, 2)}</p>
                         </div>
 
-                        <div className=' w-24 leading-7'>
+                        <div className=' w-28 leading-7 text-right'>
                             {
                                 new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0 w-24'  > 解押</div> : <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
                             }
@@ -270,9 +270,9 @@ function StakeInfo() {
                     <div className='flex   mb-3'>
                         <div className=' flex-1 flex'>
                             <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>收益:</p>
-                            <p className=' flex-1 text-right mr-4 font-bold text-lg'>{fromTokenValue(rewardAmount, 18, 2)}</p>
+                            <p className=' flex-1 text-right mr-10 font-bold text-lg'>{fromTokenValue(rewardAmount, 18, 2)}</p>
                         </div>
-                        <div className='  w-24 leading-7 text-right'>
+                        <div className='  w-28 leading-7 text-right'>
                             {
                                 new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0 w-24' > 提取收益</div> : <div className='tradeButton p-0 ' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
                             }
