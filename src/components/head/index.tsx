@@ -109,7 +109,7 @@ function Head({ setOpen, isRegister }: IHead) {
                   setMenuOpen(false)
                 }}>我的质押</p>
               </div>
-              {
+              {/* {
                 managerAddr == account && <div className=' text-white mb-4  flex' >
                   <img className=" w-5 h-5 mr-2" src={returnIcon} alt="" />
                   <p className='  ' onClick={() => {
@@ -117,8 +117,15 @@ function Head({ setOpen, isRegister }: IHead) {
                     setMenuOpen(false)
                   }}>赎回记录</p>
                 </div>
-              }
+              } */}
 
+              <div className=' text-white mb-4  flex' >
+                <img className=" w-5 h-5 mr-2" src={returnIcon} alt="" />
+                <p className='  ' onClick={() => {
+                  navLink("/unStake")
+                  setMenuOpen(false)
+                }}>赎回记录</p>
+              </div>
             </div>
           </Drawer>
           <img className=' mr-1 ' src={menuLogo} width={28} height={28} alt="" />
