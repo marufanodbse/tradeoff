@@ -323,14 +323,14 @@ function Stake() {
                                 sendStakeApprove()
                             }} >Stake</div>
                         </div>
-
+                        {/* 
                         {
                             isTop || invitersAddress !== zeroAddress ? <></> : <div className=' pb-7'>
                                 <div className='tradeButton py-2' onClick={() => {
                                     setRegisterOpen(true)
                                 }} >注册</div>
                             </div>
-                        }
+                        } */}
                     </div>
                 </div>
             </div>
