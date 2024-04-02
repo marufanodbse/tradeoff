@@ -1,0 +1,13 @@
+{
+  "TransactionPacking":"交易打包中",
+  "successfulTransaction":"交易成功",
+  "transactionFailed":"交易失败",
+  "Authorizing":"授权中",
+  "AuthorizationSuccessful":"授权成功",
+  "AuthorizationFailed":"授权失败",
+  "InsufficientAccountBalance":"账户余额不足",
+  "ParticipateInMarketMaking":"参与做市",
+  "ParticipateInMarketMakingAmount":"参与做市金额",
+  "walletBalance":"钱包余额",
+  "AccountBalance":"账户余额"
+}

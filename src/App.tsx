@@ -12,6 +12,7 @@ import Pool from './pages/pool/pool';
 import AddPair from './pages/pool/addPair/addPair';
 import AddPool from './pages/pool/add/addPool';
 import RemovePool from './pages/pool/remove/removePool';
+import Unstake from './pages/stake/unstake/unstake';
 
 const App = () => {
   const { address } = useAccount();
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/stake/:shareAddress?" element={<Stake />} />
           <Route path="/myStake" element={<StakeInfo />} />
+          <Route path="/unStake" element={<Unstake />} />
           <Route path="/ipo" element={<Ipo />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/pool" element={<Pool />} />

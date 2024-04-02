@@ -601,6 +601,11 @@
     "name": "unstakeRecords",
     "outputs": [
       {
+        "internalType": "bytes32[]",
+        "name": "ids",
+        "type": "bytes32[]"
+      },
+      {
         "components": [
           {
             "internalType": "address",

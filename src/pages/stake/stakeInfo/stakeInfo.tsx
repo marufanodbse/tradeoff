@@ -68,7 +68,7 @@ function StakeInfo() {
     }
     const getPowerOf = async () => {
         let { data, code }: IResponse = await getReadData("powerOf", usdtStakeABI, StakeAddr, [account], account);
-        console.log("getPowerOf",data)
+        console.log("getPowerOf", data)
         if (code == 200) {
             setUserPower(data[0]);
             setAllPower(data[1])
@@ -91,7 +91,7 @@ function StakeInfo() {
         let { data, code }: IResponse = await getReadData("stakeRecords", usdtStakeABI, StakeAddr, [account], account);
         if (code == 200) {
             let Arr: any = [];
-            console.log("getStakeRecords",data)
+            console.log("getStakeRecords", data)
             for (let index = 0; index < data.length; index++) {
                 const element = data[index];
                 let obj = {
@@ -252,8 +252,7 @@ function StakeInfo() {
                             <p className=' w-12 text-man  text-sm text-gray-300 text-right leading-7'>总质押:</p>
                             <p className=' flex-1 text-right mr-10 font-bold text-lg'>{fromTokenValue(stakeAmount, 18, 2)}</p>
                         </div>
-                        <div className='  w-28 text-right'>
-                        </div>
+                        <div className='w-28 text-right'> </div>
                     </div>
                     <div className='flex   mb-3'>
                         <div className=' flex-1 flex'>
@@ -263,7 +262,7 @@ function StakeInfo() {
 
                         <div className=' w-28 leading-7 text-right'>
                             {
-                                new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0 w-24'  > 解押</div> : <div className='tradeButton p-0' style={{ width: "100px" }} onClick={() => { sendUnstake() }}> 解押</div>
+                                new BigNumber(releaseAmount).isZero() ? <div className='tradeButtonGray p-0 w-24'  > 赎回</div> : <div className='tradeButton p-0 w-24' onClick={() => { sendUnstake() }}> 赎回</div>
                             }
                         </div>
                     </div>
@@ -274,7 +273,7 @@ function StakeInfo() {
                         </div>
                         <div className='  w-28 leading-7 text-right'>
                             {
-                                new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0 w-24' > 提取收益</div> : <div className='tradeButton p-0 ' style={{ width: "100px" }} onClick={() => { sendHarvest() }}> 提取收益</div>
+                                new BigNumber(rewardAmount).isZero() ? <div className='tradeButtonGray p-0 w-24' > 提取</div> : <div className='tradeButton p-0  w-24' onClick={() => { sendHarvest() }}> 提取</div>
                             }
                         </div>
                     </div>
@@ -292,7 +291,6 @@ function StakeInfo() {
                 </div>
             </div>
         </div>
-
     )
 }
 
@@ -311,8 +309,6 @@ function StakeItemState({ value, releaseTime, unStakeId, stakeTime }: IStakeItem
     useEffect(() => {
         getState(releaseTime, unStakeId)
     })
-    // 已解锁 处理中 已完成
-
     const getState = async (time: any, stakeId: any) => {
         let nowTime = new Date().getTime() / 1000;
         if (stakeId == MIN_UNIT256_BYTES32) {
@@ -324,7 +320,6 @@ function StakeItemState({ value, releaseTime, unStakeId, stakeTime }: IStakeItem
         } else {
             try {
                 let { data, code }: IResponse = await getReadData("unstakeRecord", usdtStakeABI, StakeAddr, [stakeId], account);
-                console.log("unstakeRecord", data)
                 setUnStakeTime(data.unstakeTime)
                 if (code == 200) {
                     if (data.finished) {

@@ -1,34 +1,50 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { useGlobal } from "../../context/GlobalProvider"
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Drawer from "antd/es/drawer";
-import { homeIcon, ipoIcon, menuIcon, menuLogo, myIcon, stakeIcon, swapIcon } from "../../image";
+import { homeIcon, ipoIcon, menuIcon, menuLogo, myIcon, returnIcon, stakeIcon, swapIcon } from "../../image";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18n";
 import { IResponse, getReadData } from "../../config/api";
-import { usdtStakeABI } from "../../abi/abi";
-import { zeroAddress } from "viem";
+import { ipoABI, usdtStakeABI } from "../../abi/abi";
 
 interface IHead {
   setOpen?: Function
   ipoChange?: Boolean
   isRegister?: Boolean
 }
-
+let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 
 function Head({ setOpen, isRegister }: IHead) {
   const { account } = useGlobal()
   const navigate = useNavigate();
-  const params = useParams()
+  const { t } = useTranslation()
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [path, setPath] = useState<string>('/');
+  const [managerAddr, setManagerAddr] = useState<string>("")
 
   useEffect(() => {
     setPath(location.pathname);
+    getManager()
   }, [isRegister, account, location.pathname])
 
   const navLink = (url: string) => {
     navigate(url)
+  }
+
+  const changeLanguage = (changeLanguageStr: string) => {
+    setMenuOpen(false)
+    i18n.changeLanguage(changeLanguageStr)
+  }
+
+  const getManager = async () => {
+    let { data, code }: IResponse = await getReadData("manager", usdtStakeABI, StakeAddr, [], account);
+    console.log("getManager", data)
+    if (code == 200) {
+      setManagerAddr(data)
+    }
   }
 
   return (
@@ -93,6 +109,16 @@ function Head({ setOpen, isRegister }: IHead) {
                   setMenuOpen(false)
                 }}>我的质押</p>
               </div>
+              {
+                managerAddr == account && <div className=' text-white mb-4  flex' >
+                  <img className=" w-5 h-5 mr-2" src={returnIcon} alt="" />
+                  <p className='  ' onClick={() => {
+                    navLink("/unStake")
+                    setMenuOpen(false)
+                  }}>赎回记录</p>
+                </div>
+              }
+
             </div>
           </Drawer>
           <img className=' mr-1 ' src={menuLogo} width={28} height={28} alt="" />
