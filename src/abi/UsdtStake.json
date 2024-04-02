@@ -172,7 +172,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "next_stake_release",
+        "name": "next_stype_release",
         "type": "uint256"
       }
     ],
@@ -247,7 +247,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "user",
         "type": "address"
       }
     ],
@@ -257,25 +257,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "isTopers",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -367,7 +348,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "inviter",
+        "name": "_inviter",
         "type": "address"
       }
     ],
@@ -418,27 +399,14 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_user",
-        "type": "address"
-      }
-    ],
-    "name": "setToper",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       },
       {
-        "internalType": "uint8",
+        "internalType": "uint256",
         "name": "stakeType",
-        "type": "uint8"
+        "type": "uint256"
       }
     ],
     "name": "stake",
@@ -506,14 +474,14 @@
             "type": "bytes32"
           },
           {
-            "internalType": "uint64",
-            "name": "stakeTime",
-            "type": "uint64"
+            "internalType": "uint256",
+            "name": "stakeType",
+            "type": "uint256"
           },
           {
-            "internalType": "uint64",
+            "internalType": "uint256",
             "name": "releaseTime",
-            "type": "uint64"
+            "type": "uint256"
           }
         ],
         "internalType": "struct IUsdtStake.StakeInfo[]",

@@ -155,7 +155,7 @@ function Stake() {
                 functionName: 'stake',
                 args: [sendAmount, stakeType],
             })
-            console.log("stakeConfig", stakeConfig)
+            console.log("stakeConfig", stakeConfig,stakeType)
 
             let status = await sendStatus(stakeConfig)
 

@@ -16,7 +16,6 @@ const link = process.env.REACT_APP_LINK + "";
 
 const OneDay = process.env.REACT_APP_ONEDAY + "";
 
-
 function StakeInfo() {
     const { account } = useGlobal();
     const [tipOpen, setTipOpen] = useState<boolean>(false);
@@ -69,6 +68,7 @@ function StakeInfo() {
     }
     const getPowerOf = async () => {
         let { data, code }: IResponse = await getReadData("powerOf", usdtStakeABI, StakeAddr, [account], account);
+        console.log("getPowerOf",data)
         if (code == 200) {
             setUserPower(data[0]);
             setAllPower(data[1])
@@ -91,19 +91,19 @@ function StakeInfo() {
         let { data, code }: IResponse = await getReadData("stakeRecords", usdtStakeABI, StakeAddr, [account], account);
         if (code == 200) {
             let Arr: any = [];
-
+            console.log("getStakeRecords",data)
             for (let index = 0; index < data.length; index++) {
                 const element = data[index];
                 let obj = {
                     value: "0",
                     releaseTime: "0",
-                    stakeTime: "0",
+                    stakeType: "0",
                     unStakeId: "",
                 }
 
                 obj.value = element.value;
                 obj.releaseTime = element.releaseTime;
-                obj.stakeTime = element.stakeTime;
+                obj.stakeType = element.stakeType;
                 if (index === 0) {
                     obj.unStakeId = element.unStakeId
                 } else {
@@ -122,9 +122,8 @@ function StakeInfo() {
             for (let j = 0; j < Arr.length; j++) {
                 const element = Arr[j];
                 if (element.unStakeId == MIN_UNIT256_BYTES32) {
-                    let level = new BigNumber(new BigNumber(element.releaseTime).minus(element.stakeTime).toString()).dividedBy(OneDay).dividedBy(stakeDays).toNumber()
-                    console.log("level", level, element.value)
-                    powerNum = new BigNumber(powerNum).plus(new BigNumber(element.value).multipliedBy(level == 1 ? 1 : level == 2 ? 1.5 : 2).toString()).toString()
+                    let level = Number(element.stakeType)
+                    powerNum = new BigNumber(powerNum).plus(new BigNumber(element.value).multipliedBy(level == 0 ? 1 : level == 1 ? 1.5 : 2).toString()).toString()
                 }
             }
             setUserPowerAdd(powerNum)
@@ -286,7 +285,7 @@ function StakeInfo() {
 
                         {
                             stakeList && stakeList.map((item: any, index: number) => {
-                                return <StakeItemState key={index} value={item.value} releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} stakeTime={item.stakeTime} />
+                                return <StakeItemState key={index} value={item.value} releaseTime={item.releaseTime.toString()} unStakeId={item.unStakeId} stakeTime={new BigNumber(item.releaseTime).minus(new BigNumber(stakeDays).multipliedBy(2 ** item.stakeType.toString()).multipliedBy(OneDay).toString()).toString()} />
                             })
                         }
                     </div>
