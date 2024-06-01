@@ -8,6 +8,7 @@ import { pairABI } from "../../abi/abi";
 import TokenName from "../../components/token/TokenName";
 import { DownOutlined } from "@ant-design/icons";
 import TokenIcon from "../../components/token/tokenIcon";
+import { useTranslation } from "react-i18next";
 
 interface IPairItem {
     pairaddr: string
@@ -16,6 +17,7 @@ interface IPairItem {
 function PairItem({ pairaddr }: IPairItem) {
     const navigate = useNavigate();
     const { account } = useGlobal()
+    const {t} =useTranslation()
 
     const [tokenA, setTokenA] = useState<string>("");
     const [tokenB, setTokenB] = useState<string>("");
@@ -40,8 +42,6 @@ function PairItem({ pairaddr }: IPairItem) {
         try {
 
             let pairBalance = await getReadData("balanceOf", pairABI, pairaddr, [account], account);
-            console.log("pairBalance", pairBalance)
-
             setAccountPairAmount(pairBalance.data.toString())
             let total = await getReadData("totalSupply", pairABI, pairaddr, [], account);
             setPairTotal(total.data.toString())
@@ -55,13 +55,10 @@ function PairItem({ pairaddr }: IPairItem) {
             let tokenbDecimals = tokenBErc20.decimals
             setTokenADecimals(tokenaDecimals)
             setTokenBDecimals(tokenbDecimals)
-
             let reserves = await getReadData("getReserves", pairABI, pairaddr, [], account);
-
             setTokenAReserves(reserves.data[0].toString());
             setTokenBReserves(reserves.data[1].toString());
         } catch (error) {
-            console.log(error)
             setAccountPairAmount("0");
             setPairTotal("0");
             setTokenAReserves("0");
@@ -70,78 +67,81 @@ function PairItem({ pairaddr }: IPairItem) {
     }
     return (<>
         {
-            new BigNumber(accountPairAmount).isZero() ? <></> : <div className="mx-6 rounded-xl bg-white p-2 mb-3">
-                <div className="flex px-2">
-                    <div className=" flex-1 flex  " >
-                        <div className='flex'>
-                            <div className='tokenA'>
-                                <TokenIcon tokenAddr={tokenA + ""} />
+            new BigNumber(accountPairAmount).isZero() ? <></> :
+                <div className="borderSelectToken mx-6 mt-5">
+                    <div className=" p-2 ">
+                        <div className="flex px-2">
+                            <div className=" flex-1 flex  " >
+                                <div className='flex'>
+                                    <div className='tokenA'>
+                                        <TokenIcon tokenAddr={tokenA + ""} />
+                                    </div>
+                                    <div className=' relative z-10  -left-2'>
+                                        <TokenIcon tokenAddr={tokenB + ""} />
+                                    </div>
+                                </div>
+                                <div className=" font-medium">
+                                    <span className=" relative">
+                                        <TokenName tokenAddr={tokenA} /> /  <TokenName tokenAddr={tokenB} />
+                                    </span>
+                                </div>
                             </div>
-                            <div className=' relative z-10  -left-2'>
-                                <TokenIcon tokenAddr={tokenB + ""} />
+                            <div onClick={() => {
+                                setOpen(!open)
+                            }} className=" cursor-pointer" >
+                                <DownOutlined />
                             </div>
                         </div>
+                        {
+                            open &&
+                            <div className=" text-sm">
+                                <div className="flex pt-3" >
+                                    <div className="flex-1">{t("Yourtotalliquidity")} (LP):</div>
+                                    <div>
+                                        {accountPairAmount == "0" ? 0 : trimNumber(fromTokenValue(accountPairAmount, 18, 6), 3)}
+                                    </div>
+                                </div>
+                                <div className="flex  " >
+                                    <div className="flex-1">{t("Flowpoolcollection")} <TokenName tokenAddr={tokenA} />:</div>
+                                    <div>
+                                        {
+                                            trimNumber(fromTokenValue(new BigNumber(tokenAReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenADecimals), 3), 3)
+                                        }
+                                    </div>
+                                </div>
 
-                        <div className=" font-medium">
-                            <span className=" relative">
-                                <TokenName tokenAddr={tokenA} /> /  <TokenName tokenAddr={tokenB} />
-                            </span>
-                        </div>
-                    </div>
-                    <div onClick={() => {
-                        setOpen(!open)
-                    }} className=" cursor-pointer" >
-                        <DownOutlined />
+                                <div className="flex  " >
+                                    <div className="flex-1">{t("Flowpoolcollection")} <TokenName tokenAddr={tokenB} />:</div>
+                                    <div>
+                                        {
+                                            trimNumber(fromTokenValue(new BigNumber(tokenBReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenBDecimals), 3), 3)
+                                        }
+                                    </div>
+                                </div>
+
+                                <div className="flex ">
+                                    <div className="flex-1">{t("Yourpoolshare")}:</div>
+                                    <div>
+                                        {accountPairAmount == "0" ? 0 : removeTrailingZeros(new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toNumber(), 3)}%
+                                    </div>
+                                </div>
+
+                                <div className=" flex mt-4">
+                                    <div className=" flex-1 tradeButton py-1"
+                                        onClick={() => {
+                                            navigate('/pool/add/' + tokenA + '/' + tokenB);
+                                        }}
+                                    > {t("Add")}</div>
+                                    <div className=" w-10"></div>
+                                    <div className="flex-1 tradeButton py-1" onClick={() => {
+                                        navigate('/pool/remove/' + tokenA + '/' + tokenB);
+                                    }}> {t("Remove")}</div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
-                {
-                    open &&
-                    <div className=" text-sm">
-                        <div className="flex pt-3" >
-                            <div className="flex-1">您的流动池代币总额(LP):</div>
-                            <div>
-                                {accountPairAmount == "0" ? 0 : trimNumber(fromTokenValue(accountPairAmount, 18, 6), 3)}
-                            </div>
-                        </div>
-                        <div className="flex  " >
-                            <div className="flex-1">流动池汇集 <TokenName tokenAddr={tokenA} />:</div>
-                            <div>
-                                {
-                                    trimNumber(fromTokenValue(new BigNumber(tokenAReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenADecimals), 3), 3)
-                                }
-                            </div>
-                        </div>
 
-                        <div className="flex  " >
-                            <div className="flex-1">流动池汇集 <TokenName tokenAddr={tokenB} />:</div>
-                            <div>
-                                {
-                                    trimNumber(fromTokenValue(new BigNumber(tokenBReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenBDecimals), 3), 3)
-                                }
-                            </div>
-                        </div>
-
-                        <div className="flex ">
-                        <div className="flex-1">您的流动池份额:</div>
-                            <div>
-                                {accountPairAmount == "0" ? 0 :removeTrailingZeros(new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toNumber(), 3)}%
-                            </div>
-                        </div>
-
-                        <div className=" flex mt-4">
-                            <div className=" flex-1 tradeButton py-1"
-                                onClick={() => {
-                                    navigate('/pool/add/' + tokenA + '/' + tokenB);
-                                }}
-                            > 添加</div>
-                            <div className=" w-10"></div>
-                            <div className="flex-1 tradeButton py-1" onClick={() => {
-                                navigate('/pool/remove/' + tokenA + '/' + tokenB);
-                            }}> 去除</div>
-                        </div>
-                    </div>
-                }
-            </div>
         }
     </>)
 }

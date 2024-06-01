@@ -7,10 +7,12 @@ import { usdtStakeABI } from "../../../abi/abi";
 import { formatAccount, fromTokenValue, getTime, toTokenValue } from "../../../utils";
 import { Checkbox, Radio, Tooltip } from "antd";
 import { prepareWriteContract } from "wagmi/actions";
+import { useTranslation } from "react-i18next";
 let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 
 function Unstake() {
     const { account } = useGlobal()
+    const { t } = useTranslation()
     const [tipOpen, setTipOpen] = useState<boolean>(false);
     const [tipOpenState, setTipOpenState] = useState<string>("loading");
     const [tipOpenText, setTipOpenText] = useState<string>("");
@@ -57,7 +59,7 @@ function Unstake() {
     const sendPayUnstakes = async () => {
         setTipOpen(true);
         setTipOpenState("loading")
-        setTipOpenText("加载中...")
+         setTipOpenText(`${t("TransactionPacking")}`)
         try {
             let ids: any = [];
             for (let index = 0; index < sendList.length; index++) {
@@ -85,7 +87,7 @@ function Unstake() {
 
     const sendTipSuccess = () => {
         setTipOpenState("success")
-        setTipOpenText("交易成功")
+        setTipOpenText(`${t("successfulTransaction")}`)
         getUnstakeRecords()
         setTimeout(() => {
             setTipOpen(false)
@@ -95,7 +97,7 @@ function Unstake() {
 
     const sendTipErr = () => {
         setTipOpenState("error")
-        setTipOpenText("交易失败")
+       setTipOpenText(`${t("transactionFailed")}`)
         setTimeout(() => {
             setTipOpen(false)
             setTipOpenState("")

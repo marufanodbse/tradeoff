@@ -5,21 +5,22 @@ import reportWebVitals from './reportWebVitals';
 import './index.css';
 
 import '@rainbow-me/rainbowkit/styles.css';
-import { Chain, connectorsForWallets, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { Chain, connectorsForWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
   bsc, bscTestnet
 } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import App from './App';
-import { metaMaskWallet, okxWallet, imTokenWallet, tokenPocketWallet, rainbowWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import { metaMaskWallet, tokenPocketWallet, rainbowWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
 import GlobalProvider from './context/GlobalProvider';
+import i18n from './i18n';
 let net = process.env.REACT_APP_NetWork + ""
 
-const INK: Chain = {
+const TestNet: Chain = {
   id: 54321,
-  name: 'INK TestNet',
-  network: 'INK TestNet',
+  name: ' TestNet',
+  network: ' TestNet',
   iconUrl: null,
   iconBackground: '#fff',
   nativeCurrency: {
@@ -41,12 +42,10 @@ let projectId = "ae6db5c9c381306507026b30055a5bbe"
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    net == "INK" ? INK : net == "BSCTEST" ? bscTestnet : bsc,
+    net == "TEST" ? TestNet : net == "BSCTEST" ? bscTestnet : bsc,
   ],
   [publicProvider()]
 );
-
-console.log("net", net)
 
 const connectors = connectorsForWallets([
   {
@@ -70,11 +69,12 @@ const wagmiConfig = createConfig({
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+const language: any = i18n.language
 root.render(
   <React.StrictMode>
     <GlobalProvider>
       <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={chains} >
+        <RainbowKitProvider chains={chains} locale={language} >
           <App />
         </RainbowKitProvider>
       </WagmiConfig>

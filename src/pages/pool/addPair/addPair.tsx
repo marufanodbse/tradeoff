@@ -13,6 +13,7 @@ import TokenBalance from '../../../components/token/tokenBalance';
 import { pairData } from '../pool';
 import { ArrowLeftOutlined, DownOutlined, PlusOutlined } from '@ant-design/icons';
 import TokenIcon from '../../../components/token/tokenIcon';
+import { useTranslation } from 'react-i18next';
 
 
 const REWARD = process.env.REACT_APP_TOKEN_REWARD + "";
@@ -22,6 +23,7 @@ const factroryAddr = process.env.REACT_APP_FACTORY + "";
 function AddPair() {
     const navigate = useNavigate();
     const { account } = useGlobal()
+    const {t}=useTranslation()
     const [tokenA, setTokenA] = useState<string>(REWARD);
     const [tokenB, setTokenB] = useState<string>(USDT);
 
@@ -37,7 +39,6 @@ function AddPair() {
     const [accountPairAmount, setAccountPairAmount] = useState<string>("0")
     const [pairTotal, setPairTotal] = useState<string>("0")
     const [pairAddr, setPairAddr] = useState<string>("")
-
 
     const [pairList, setPairList] = useState<any>([])
     const [addPair, setAddpair] = useState<boolean>(false);
@@ -75,11 +76,9 @@ function AddPair() {
             if (pairAddrData.code == 200) {
                 let address = pairAddrData.data
                 setPairAddr(address)
-
                 if (address == zeroAddress) {
                     return
                 }
-
                 let dataIndex = dataArr.findIndex((itemData: any) => {
                     return itemData == address
                 });
@@ -91,13 +90,11 @@ function AddPair() {
                 }
 
                 let pairBalance = await getReadData("balanceOf", pairABI, address, [account], account);
-                console.log("pairBalance", pairBalance)
                 setAccountPairAmount(pairBalance.data.toString())
                 let total = await getReadData("totalSupply", pairABI, address, [], account);
                 setPairTotal(total.data.toString())
                 let token0Data = await getReadData("token0", pairABI, address, [], account);
                 let reserves = await getReadData("getReserves", pairABI, address, [], account);
-                console.log("getReserves", reserves)
                 if (tokena == token0Data.data) {
                     setTokenAReserves(reserves.data[0].toString());
                     setTokenBReserves(reserves.data[1].toString());
@@ -114,7 +111,7 @@ function AddPair() {
                 return
             }
         } catch (error) {
-            console.log(error)
+
             setPairAddr("")
             setAccountPairAmount("0");
             setPairTotal("0");
@@ -154,46 +151,45 @@ function AddPair() {
         <TokenCyPop open={tokenPopOpen} setOpen={setTpkenPopOpen} tokenType={tokenPopOpenType} setTokenA={setTokenA} setTokenB={setTokenB} />
 
         <div className="main">
-            <div className='mx-6 rounded-xl bg-white px-5 py-3 mb-8'>
-                <div className="flex mb-4">
-                    <div onClick={() => {
-                        navigate('/pool')
+            <div>
+                <p className=' text-center font-Copperplate text-3xl mb-10 text-[#4a1d83]'>TradeOFF</p>
+            </div>
+            <div className="mx-6">
+                <p className=' text-center font-normal text-xl mb-2'>  <ArrowLeftOutlined className=' mr-5' onClick={() => {
+                    navigate('/pool')
+                }} />{t("Importpool")}</p>
+            </div>
+            <div className=" bg-[#E1D4F7]   px-6 py-2 mb-4">
+                <p className="  text-xs">{t("Tip")}</p>
+            </div>
+            <div className=' mx-6 mb-8'>
+                <div className="borderSelectToken">
+                    <div className="flex  px-5 py-2 " onClick={() => {
+                        setTpkenPopOpen(true)
+                        setTpkenPopOpenType("in")
                     }}>
-                        <ArrowLeftOutlined />
-                    </div>
-                    <div className="flex-1">
-                        <p className=" font-medium text-center " >导入流动池</p>
-                    </div>
-                </div>
-                <div className=" bg-1 rounded-lg  p-4 mb-4">
-                    <p className="  text-sm">提示:使用此工具可查找未自动出现在界面中的流动池。</p>
-                </div>
-
-                <div className="flex  border border-1 rounded-lg  px-5 py-2 " onClick={() => {
-                    setTpkenPopOpen(true)
-                    setTpkenPopOpenType("in")
-                }}>
-                    <div className="flex-1  ">
-                        <TokenName tokenAddr={tokenA} />
-                    </div>
-                    <div >
-                        <DownOutlined />
+                        <div className="flex-1  ">
+                            <TokenName tokenAddr={tokenA} />
+                        </div>
+                        <div >
+                            <DownOutlined />
+                        </div>
                     </div>
                 </div>
-
                 <div className=" text-center py-2  w-full ">
                     <PlusOutlined />
                 </div>
-
-                <div className="flex  border border-1 rounded-lg  px-5 py-2 mb-4 " onClick={() => {
-                    setTpkenPopOpen(true)
-                    setTpkenPopOpenType("out")
-                }}>
-                    <div className="flex-1  ">
-                        <TokenName tokenAddr={tokenB} />
-                    </div>
-                    <div >
-                        <DownOutlined />
+                <div className="borderSelectToken mb-7">
+                    <div className="flex   px-5 py-2 " onClick={() => {
+                        setTpkenPopOpen(true)
+                        setTpkenPopOpenType("out")
+                    }}>
+                        <div className="flex-1  ">
+                            <TokenName tokenAddr={tokenB} />
+                        </div>
+                        <div >
+                            <DownOutlined />
+                        </div>
                     </div>
                 </div>
 
@@ -201,64 +197,67 @@ function AddPair() {
                     addPair ? <div className="tradeButton py-2" >
                         <p onClick={() => {
                             setPairData()
-                        }}> 导入 </p>
+                        }}> {t("Import")} </p>
                     </div> : <div className="tradeButtonGray py-2">
                         {
                             pairAddr !== zeroAddress ? <div>
-                                <p>已添加流动池</p>
-                            </div> : <>未找到流动池</>
+                                <p>{t("Liquiditypooladded")}</p>
+                            </div> : <>{t("Liquiditypoolnotfound")}</>
                         }
                     </div>
                 }
             </div>
             {
-                pairAddr !== zeroAddress ? <div className="mx-6 rounded-xl bg-white px-5 py-3 mb-8">
-                    <div>
-                        <p className=" font-medium"> 您的流动资金仓位</p>
-                    </div>
-                    <div className="flex  py-2 ">
-                        <div className="flex-1 ">
-                            <div className="flex text-sm">
-                                <div className='flex'>
-                                    <div className='tokenA'>
-                                        <TokenIcon tokenAddr={tokenA + ""} />
-                                    </div>
-                                    <div className=' relative z-10  -left-2'>
-                                        <TokenIcon tokenAddr={tokenB + ""} />
+                pairAddr !== zeroAddress ?
+                    <div className="borderSelectToken mx-6 mb-8">
+                        <div className="px-5 py-3 ">
+                            <div>
+                                <p className=" font-medium"> {t("Yourliquidityposition")}</p>
+                            </div>
+                            <div className="flex  py-2 ">
+                                <div className="flex-1 ">
+                                    <div className="flex text-sm">
+                                        <div className='flex'>
+                                            <div className='tokenA'>
+                                                <TokenIcon tokenAddr={tokenA + ""} />
+                                            </div>
+                                            <div className=' relative z-10  -left-2'>
+                                                <TokenIcon tokenAddr={tokenB + ""} />
+                                            </div>
+                                        </div>
+                                        <div className="leading-6">
+                                            <TokenName tokenAddr={tokenA + ""} /> / <TokenName tokenAddr={tokenB + ""} />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="leading-6">
-                                    <TokenName tokenAddr={tokenA + ""} /> / <TokenName tokenAddr={tokenB + ""} />
+                                <div className="text-sm leading-6"><TokenBalance token={pairAddr} addr={account + ""} decimalPlaces={6} change={change} /></div>
+                            </div>
+                            <div className="flex  text-sm">
+                                <div className="flex-1">{t("Yourpoolshare")}:</div>
+                                <div>
+                                    {accountPairAmount == "0" ? 0 : removeTrailingZeros(new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toNumber(), 3)}%
+                                </div>
+                            </div>
+                            <div className="flex  text-sm">
+                                <div className="flex-1"><TokenName tokenAddr={tokenA + ""} />:</div>
+                                <div>
+                                    {
+                                        fromTokenValue(new BigNumber(tokenAReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenADecimals), 3)
+                                    }
+                                </div>
+                            </div>
+                            <div className="flex  text-sm">
+                                <div className="flex-1"><TokenName tokenAddr={tokenB + ""} />:</div>
+                                <div>
+                                    {
+                                        fromTokenValue(new BigNumber(tokenBReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenBDecimals), 3)
+                                    }
                                 </div>
                             </div>
                         </div>
-                        <div className="text-sm leading-6"><TokenBalance token={pairAddr} addr={account + ""} decimalPlaces={6} change={change} /></div>
                     </div>
-                    <div className="flex  text-sm">
-                        <div className="flex-1">您的流动池份额:</div>
-                        <div>
-                            {accountPairAmount == "0" ? 0 : removeTrailingZeros(new BigNumber(accountPairAmount).multipliedBy(100).dividedBy(pairTotal).toNumber(), 3)}%
-                        </div>
-                    </div>
-                    <div className="flex  text-sm">
-                        <div className="flex-1"><TokenName tokenAddr={tokenA + ""} />:</div>
-                        <div>
-                            {
-                                fromTokenValue(new BigNumber(tokenAReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenADecimals), 3)
-                            }
-                        </div>
-                    </div>
-                    <div className="flex  text-sm">
-                        <div className="flex-1"><TokenName tokenAddr={tokenB + ""} />:</div>
-                        <div>
-                            {
-                                fromTokenValue(new BigNumber(tokenBReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).toFixed(), Number(tokenBDecimals), 3)
-                            }
-                        </div>
-                    </div>
-                </div> : <></>
+                    : <></>
             }
-
         </div>
     </div>)
 }

@@ -11,7 +11,7 @@ interface OpenStatus {
 
 export default function TipPop({ open, setOpen, tipPopText, tipPopState }: OpenStatus) {
 
-    return <Modal zIndex={1000} open={open}
+    return <Modal zIndex={2000} open={open}
         style={{
             marginTop: "20%",
         }}

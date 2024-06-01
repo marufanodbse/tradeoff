@@ -9,6 +9,7 @@ import Head from '../../../components/head'
 import BigNumber from "bignumber.js";
 import { changeIcon, checkIcon, copyIcon, lockEdIcon, lockIcon } from '../../../image'
 import copy from 'copy-to-clipboard';
+import { useTranslation } from 'react-i18next'
 
 let StakeAddr: any = process.env.REACT_APP_StakeAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
@@ -18,6 +19,7 @@ const OneDay = process.env.REACT_APP_ONEDAY + "";
 
 function StakeInfo() {
     const { account } = useGlobal();
+    const { t } = useTranslation()
     const [tipOpen, setTipOpen] = useState<boolean>(false);
     const [tipOpenState, setTipOpenState] = useState<string>("loading");
     const [tipOpenText, setTipOpenText] = useState<string>("");
@@ -135,7 +137,7 @@ function StakeInfo() {
     const sendUnstake = async () => {
         setTipOpen(true);
         setTipOpenState("loading")
-        setTipOpenText("加载中...")
+         setTipOpenText(`${t("TransactionPacking")}`)
         try {
             const unstakeConfig = await prepareWriteContract({
                 address: StakeAddr,
@@ -163,7 +165,7 @@ function StakeInfo() {
     const sendHarvest = async () => {
         setTipOpen(true);
         setTipOpenState("loading")
-        setTipOpenText("加载中...")
+         setTipOpenText(`${t("TransactionPacking")}`)
         try {
             const unstakeConfig = await prepareWriteContract({
                 address: StakeAddr,
@@ -189,7 +191,7 @@ function StakeInfo() {
 
     const sendTipSuccess = () => {
         setTipOpenState("success")
-        setTipOpenText("交易成功")
+        setTipOpenText(`${t("successfulTransaction")}`)
         setTimeout(() => {
             init()
             setTipOpen(false)
@@ -199,7 +201,7 @@ function StakeInfo() {
 
     const sendTipErr = () => {
         setTipOpenState("error")
-        setTipOpenText("交易失败")
+       setTipOpenText(`${t("transactionFailed")}`)
         setTimeout(() => {
             setTipOpen(false)
             setTipOpenState("")
@@ -230,7 +232,7 @@ function StakeInfo() {
                     <div className='font-bold text-xl flex leading-8'>
                         分享链接:
                         <div className=" flex mt-1" onClick={() => {
-                            copy(link + account + "");
+                            copy(link+"stake/" + account + "");
                             setTipOpen(true)
                             setTipOpenState("success")
                             setTipOpenText("复制成功")

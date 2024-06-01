@@ -14,7 +14,8 @@ module.exports = {
         // theme:"#FAE011"
       },
       textColor:{
-        "main":"#1f0503"
+        "main":"#1f0503",
+        "navColor":"#69498A"
       },
       height:{
         "15":"60px"
@@ -27,6 +28,12 @@ module.exports = {
       },
       borderColor:{
         '1':"#3e0d09"
+      },
+      fontFamily: {
+        'FZLTXHK': ['FZLanTingHei-L-GBK'],
+        'Copperplate': ['Copperplate Gothic Light'],
+        'DengXian': ['DengXian'],
+        'navCard': ['Adobe Heiti Std'],
       }
     },
   },

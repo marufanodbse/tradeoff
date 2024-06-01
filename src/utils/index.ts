@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { Await } from "react-router-dom";
 export const toTokenValue = (value: any, decimals: number, mantissa?: number) => {
     if (mantissa) return removeTrailingZeros(new BigNumber(value).multipliedBy(10 ** decimals).toNumber(), mantissa);
     return new BigNumber(value).multipliedBy(10 ** decimals).toFixed();
@@ -98,4 +99,11 @@ export function formatAccount(value: any, lenStart: number, lenEnd: number) {
     if (!lenStart) { lenStart = 8; }
     if (!lenEnd) { lenEnd = 8; }
     return value.slice(0, lenStart) + "..." + value.slice(-lenEnd)
+}
+
+
+export const getTitle=async()=>{
+    let data= await fetch('./nodeName.json')
+    if (data.ok){
+    } 
 }

@@ -6,6 +6,7 @@ import { ITokenData } from '../../pages/swap/swap'
 import { useGlobal } from '../../context/GlobalProvider'
 import TokenName from '../token/TokenName'
 import TokenIcon from '../token/tokenIcon'
+import { useTranslation } from 'react-i18next'
 interface OpenStatus {
     open: boolean,
     setOpen: Function,
@@ -26,6 +27,7 @@ const USDT = process.env.REACT_APP_TOKEN_USDT + "";
 function TokenCyPop({ open, setOpen, tokenType, tokenIn, setTokenIn, tokenOut, setTokenOut, linkType, linkTokenA, linkTokenB, setTokenA, setTokenB }: OpenStatus) {
     const navigate = useNavigate();
     const { account } = useGlobal()
+    const {t} =useTranslation()
     const [type, setType] = useState<boolean>(false);
     const [typeManger, setTypeManger] = useState<boolean>(true);
     const [localData, setLocalData] = useState<any>([]);
@@ -69,7 +71,6 @@ function TokenCyPop({ open, setOpen, tokenType, tokenIn, setTokenIn, tokenOut, s
 
     return (
         <Modal
-            className=''
             open={open}
             centered
             footer={null}
@@ -77,7 +78,7 @@ function TokenCyPop({ open, setOpen, tokenType, tokenIn, setTokenIn, tokenOut, s
             width={"300px"}
         >
             <div className='flex  mb-4'>
-                <div className="flex-1  font-medium">选择代币</div>
+                <div className="flex-1  font-medium">{t("Selecttoken")}</div>
                 <div onClick={() => {
                     setOpen(false)
                 }}>

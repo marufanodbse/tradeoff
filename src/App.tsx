@@ -13,6 +13,7 @@ import AddPair from './pages/pool/addPair/addPair';
 import AddPool from './pages/pool/add/addPool';
 import RemovePool from './pages/pool/remove/removePool';
 import Unstake from './pages/stake/unstake/unstake';
+import Node from './pages/node/node'
 
 const App = () => {
   const { address } = useAccount();
@@ -27,14 +28,14 @@ const App = () => {
   return (
     <div className='App'>
       <HashRouter>
-
         <Routes >
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Node />} />
           {/* <Route path="/home/:shareAddress?" element={<Home />} /> */}
-          <Route path="/home" element={<Home />} />
+          {/* <Route path="/home" element={<Home />} /> */}
           <Route path="/stake/:shareAddress?" element={<Stake />} />
           <Route path="/myStake" element={<StakeInfo />} />
           <Route path="/unStake" element={<Unstake />} />
+          <Route path="/node/:shareAddress?" element={<Node />} />
           <Route path="/ipo" element={<Ipo />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/pool" element={<Pool />} />

@@ -109,7 +109,6 @@ export const sendStatus = async (config: any) => {
         if (configData.status && configData.status.toString() == "success") {
             return true
         } else {
-            console.log("交易失败")
             return false
         }
     } catch (error) {

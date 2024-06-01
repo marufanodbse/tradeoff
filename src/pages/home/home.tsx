@@ -1,66 +1,58 @@
+import { useTranslation } from 'react-i18next'
 import Head from '../../components/head'
-import { Col, Row } from 'antd';
 
 function Home() {
-
+  const { t } = useTranslation()
   return (
     <div>
       <Head />
-      <div className='main'>
-        <div className="mx-6 text-white">
-          <div className=' mb-8'>
-            <p className=' font-bold text-xl mb-3'>一、介绍</p>
+      <div className='main font-DengXian'>
+        <div>
+          <p className=' text-center font-Copperplate text-3xl mb-10 text-[#4a1d83]'>TradeOFF</p>
+        </div>
+        <div className='homeItemBg  px-6 py-8'>
+          <div className=' mb-8 text-white'>
+            <p className='  font-normal  text-xl mb-3 text-center'> {t("Introduce")}</p>
             <p className="indent-6  text-xs">
-              TradeOFF是一款适用于加密资产投资的，无风险高收益的DeFi平台设施。针对链上原生的加密
-              资产，TradeOFF通过消除美金本位风险，并取缔追加保证金机制和基于DeFi的特性来重新定义
-              期权交易。
+              {t("IntroduceDetail")}
             </p>
           </div>
-          <div className=' mb-8'>
-            <p className=' font-bold text-xl mb-4'>二、TradeOFF的核心特征</p>
+
+          <div className='  text-white'>
+            <p className='  font-normal  text-xl mb-6 text-center'> {t("Features")}</p>
             <div className=' flex text-xs text-center mb-4'>
-              <div className=' w-1/2 mr-3 rounded-full py-2 bg-[rgb(225,95,59)] '>增加投资收益</div>
-              <div className=' w-1/2 ml-3 rounded-full py-2 bg-[rgb(119,141,175)]'>自动执行合约</div>
+              <div className=' w-1/2 mr-3 rounded-xl  py-2 bg-[#EE5D16]'>{t("FeaturesItem1")}</div>
+              <div className=' w-1/2 ml-3 rounded-xl py-2 bg-[#778DAF]'>{t("FeaturesItem2")}</div>
             </div>
             <div className=' flex text-xs text-center'>
-              <div className=' w-1/2 mr-3 rounded-full py-2  bg-[rgb(221,210,70)]'>外部风险隔离</div>
-              <div className=' w-1/2 ml-3 rounded-full py-2 bg-[rgb(117,108,159)]'>无前置交易成本</div>
+              <div className=' w-1/2 mr-3 rounded-xl py-2  bg-[#DDD246]'>{t("FeaturesItem3")}</div>
+              <div className=' w-1/2 ml-3 rounded-xl py-2 bg-[#756C9F]'>{t("FeaturesItem4")}</div>
             </div>
           </div>
-
-          <div className=' mb-8'>
-            <p className=' font-bold text-xl mb-4'>三、TradeOFF的创新机制</p>
-
-
-            <Row gutter={16}>
-              <Col xs={12} sm={8}>
-                <div className=' bg-white p-3 rounded-lg h-40 mb-5'>
-                  <p className='font-normal mb-4 text-[rgb(225,95,59)] '>DMW</p>
-                  <p className=' text-xs text-black'>
-                    Decentralized <br />
-                    Mortgage<br />
-                    Warehouse<br />
-                    去中心化质押债仓
-                  </p>
-                </div>
-              </Col>
-
-              <Col xs={12} sm={8}>
-                <div className=' bg-white p-3 rounded-lg h-40 mb-5'>
-                  <p className='font-normal mb-4 text-[rgb(76,53,190)]'>马丁格尔</p>
-                  <p className=' text-xs text-black'>
-                    Martingale:一种投资系统，其中投资的美元价值在损失后不断增加，或者头寸规模随着投资组合规模的减小而增加。
-                  </p>
-                </div>
-              </Col>
-
-              <Col xs={12} sm={8}>
-                <div className=' bg-white p-3 rounded-lg h-40 mb-5'>
-                  <p className=' font-normal mb-4 text-[rgb(139,178,187)]'>Restaking</p>
-                  <p className=' text-xs text-black'> Restaking是将流动性质押平台代币资产用于在其他网络和区块链的验证者进行质押，以获得更多收益。</p>
-                </div>
-              </Col>
-            </Row>
+        </div>
+        <div className=' mt-4'>
+          <p className='  font-normal text-[#30174A]  text-xl mb-6 text-center'> {t("innovative")} </p>
+          <div className=' flex'>
+            <div className=' flex-1 ml-3 bg-white pl-1 rounded-lg h-60 mb-5'>
+              <p className='font-normal mb-3 mt-2 text-[#FF5A00] '>{t("DMW")}</p>
+              <p className=' text-xs text-[#0C1A71]'>
+                {t("DMWitem1")} <br />
+                {t("DMWitem2")} <br />
+                {t("DMWitem3")} <br />
+                {t("DMWitem4")} <br />
+                {t("DMWitem5")} <br />
+              </p>
+            </div>
+            <div className=' flex-1 mx-3 bg-white pl-1 rounded-lg h-60 mb-5'>
+              <p className='font-normal mb-3 mt-2 text-[#3400DD]'>{t("Martingel")}</p>
+              <p className=' text-xs text-[#0C1A71]'>
+                {t("MartingelDeatil")}
+              </p>
+            </div>
+            <div className=' flex-1 mr-3 bg-white pl-1 rounded-lg h-60 mb-5'>
+              <p className=' font-normal mb-3 mt-2 text-[#9C00DD]'>{t("Restaking")}</p>
+              <p className=' text-xs text-[#0C1A71]'>{t("RestakingDetail")}</p>
+            </div>
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ import BigNumber from "bignumber.js";
 import TipPop from '../../../components/pop/TipPop';
 import { prepareWriteContract } from 'wagmi/actions';
 import { ArrowDownOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const factroryAddr = process.env.REACT_APP_FACTORY + "";
 const routerAddr: any = process.env.REACT_APP_ROUTER + "";
@@ -19,7 +20,7 @@ function RemovePool() {
   const params = useParams();
   const navigate = useNavigate();
   const { account } = useGlobal();
-
+  const { t } = useTranslation()
   const [value, setValue] = useState<number>(50);
 
   const [tokenA, setTokenA] = useState<string>(params.tokenA + "");
@@ -33,7 +34,6 @@ function RemovePool() {
 
   const [tokenAtoTokenB, setTokenAtoTokenB] = useState<string>("0")
   const [tokenBtoTokenA, setTokenBtoTokenA] = useState<string>("0")
-
 
   const [accountPairAmount, setAccountPairAmount] = useState<string>("0")
   const [pairTotal, setPairTotal] = useState<string>("0")
@@ -81,13 +81,11 @@ function RemovePool() {
         setPairAddress(address)
 
         let pairBalance = await getReadData("balanceOf", pairABI, address, [account], account);
-        console.log("pairBalance", pairBalance)
         setAccountPairAmount(pairBalance.data.toString())
         let total = await getReadData("totalSupply", pairABI, address, [], account);
         setPairTotal(total.data.toString())
         let token0Data = await getReadData("token0", pairABI, address, [], account);
         let reserves = await getReadData("getReserves", pairABI, address, [], account);
-        console.log("getReserves", reserves)
         if (tokena == token0Data.data) {
           setTokenAReserves(reserves.data[0].toString());
           setTokenBReserves(reserves.data[1].toString());
@@ -104,7 +102,6 @@ function RemovePool() {
         return
       }
     } catch (error) {
-      console.log(error)
       setPairAddress("")
       setAccountPairAmount("0");
       setPairTotal("0");
@@ -133,20 +130,17 @@ function RemovePool() {
   }
 
   const getValue = (value: any) => {
-    console.log(value)
     setValue(value);
   };
 
   const sendRemoveLiquidityApprove = async (token: any) => {
     setTipOpen(true);
     setTipOpenState("loading")
-    setTipOpenText("加载中...")
+    setTipOpenText(`${t("TransactionPacking")}`)
     let liquidityAmount = new BigNumber(accountPairAmount).toFixed();
-
     if (value < 100) {
       liquidityAmount = new BigNumber(liquidityAmount).multipliedBy(value).dividedBy(100).toFixed(0);
     }
-
     try {
       const allowanceConfig: any = await prepareWriteContract({
         address: token,
@@ -154,9 +148,8 @@ function RemovePool() {
         functionName: 'allowance',
         args: [account, routerAddr],
       })
-      console.log("allowanceConfig", allowanceConfig)
       if (new BigNumber(allowanceConfig.result.toString()).isLessThan(liquidityAmount)) {
-        setTipOpenText("授权中...")
+       setTipOpenText(`${t("Authorizing")}`)
         const approveConfig = await prepareWriteContract({
           address: token,
           abi: erc20ABI,
@@ -167,14 +160,14 @@ function RemovePool() {
         let status = await sendStatus(approveConfig)
 
         if (status) {
-          console.log("授权成功")
-          setTipOpenText("授权成功...")
+          
+         setTipOpenText(`${t("AuthorizationSuccessful")}`)
           setTimeout(() => {
             sendRemoveLiquidityApprove(token)
           }, 1000);
         } else {
           setTipOpenState("error")
-          setTipOpenText("授权失败")
+          setTipOpenText(`${t("AuthorizationFailed")}`)
           setTimeout(() => {
             setTipOpenState("")
             setTipOpen(false)
@@ -187,7 +180,6 @@ function RemovePool() {
       sendTipErr()
     }
   }
-
 
   const sendRemoveLiquidity = async (liquidityAmount: any) => {
     let deadline = parseInt(new Date().getTime() / 1000 + "") + 120;
@@ -204,10 +196,7 @@ function RemovePool() {
           args: [tokenA, tokenB, liquidityAmount, 0, 0, account, deadline],
           account: account,
         })
-        console.log("sendConfig", sendConfig)
-
         let status = await sendStatus(sendConfig)
-
         if (status) {
           sendTipSuccess()
         } else {
@@ -229,10 +218,7 @@ function RemovePool() {
         args: [token, liquidityAmount, amountTokenMin, amountETHMin, to, deadline,],
         account: account,
       })
-      console.log("sendConfig", sendConfig)
-
       let status = await sendStatus(sendConfig)
-
       if (status) {
         sendTipSuccess()
       } else {
@@ -243,10 +229,9 @@ function RemovePool() {
     }
   }
 
-
   const sendTipSuccess = () => {
     setTipOpenState("success")
-    setTipOpenText("交易成功")
+    setTipOpenText(`${t("successfulTransaction")}`)
     setTimeout(() => {
       setTipOpen(false)
       setTipOpenState("")
@@ -255,7 +240,7 @@ function RemovePool() {
 
   const sendTipErr = () => {
     setTipOpenState("error")
-    setTipOpenText("交易失败")
+    setTipOpenText(`${t("transactionFailed")}`)
     setTimeout(() => {
       setTipOpen(false)
       setTipOpenState("")
@@ -265,98 +250,96 @@ function RemovePool() {
   return (<div>
     <Head />
     <TipPop open={tipOpen} setOpen={setTipOpen} tipPopText={tipOpenText} tipPopState={tipOpenState} />
-
     <div className="main">
-      <div className='mx-6 rounded-xl bg-white px-5 py-3 mb-8'>
-        <div className="flex mb-4">
-          <div onClick={() => {
-            navigate('/pool')
-          }}>
-            <ArrowLeftOutlined />
-          </div>
-          <div className="flex-1">
-            <p className=" font-medium text-center " >移除流动池</p>
-          </div>
-        </div>
-
-        <div className=" bg-1 mt-5 rounded-xl p-3 ">
-          <div className="flex">
-            <p className=' flex-1'>移除LP</p>
-            <p> {fromTokenValue(new BigNumber(accountPairAmount).multipliedBy(value).dividedBy(100).toString(), 18, 3)}</p>
-          </div>
-          <div className=" font-medium text-3xl py-2" >
-            {value} %
-          </div>
-          <div>
-            <Slider
-              defaultValue={value}
-              value={value}
-              styles={{
-                track: {
-                  background: "#bd0e21",
-                },
-                tracks: {
-                  background: "#bd0e21",
-                },
-                handle: {
-                  background: "#bd0e21",
-                }
-              }}
-              tooltip={{ formatter: null }} onChange={(e) => { getValue(e) }} />
-          </div>
-          <div className="flex text-center ">
-            <div className="flex-1">
-              <span onClick={() => {
-                setValue(25)
-              }}>25%</span>
+      <div>
+        <p className=' text-center font-Copperplate text-3xl mb-10 text-[#4a1d83]'>TradeOFF</p>
+      </div>
+      <div className="mx-6">
+        <p className=' text-center font-normal text-xl mb-2'>  <ArrowLeftOutlined className=' mr-5' onClick={() => {
+          navigate('/pool')
+        }} />{t("Removepool")}</p>
+      </div>
+      <div className='mx-6  py-3 mb-8'>
+        <div className="  borderSelectToken">
+          <div className="p-3 ">
+            <div className="flex">
+              <p className=' flex-1'>{t("Remove")} LP</p>
+              <p> {fromTokenValue(new BigNumber(accountPairAmount).multipliedBy(value).dividedBy(100).toString(), 18, 3)}</p>
             </div>
-            <div className="flex-1">
-              <span onClick={() => {
-                setValue(50)
-              }}>50%</span>
+            <div className=" font-medium text-3xl py-2" >
+              {value} %
             </div>
-            <div className="flex-1">
-              <span onClick={() => {
-                setValue(75)
-              }}>75%</span>
+            <div>
+              <Slider
+                defaultValue={value}
+                value={value}
+                styles={{
+                  track: {
+                    background: "#bd0e21",
+                  },
+                  tracks: {
+                    background: "#bd0e21",
+                  },
+                  handle: {
+                    background: "#bd0e21",
+                  }
+                }}
+                tooltip={{ formatter: null }} onChange={(e) => { getValue(e) }} />
             </div>
-            <div className="flex-1">
-              <span onClick={() => {
-                setValue(100)
-              }}>100%</span>
+            <div className="flex text-center ">
+              <div className="flex-1">
+                <span onClick={() => {
+                  setValue(25)
+                }}>25%</span>
+              </div>
+              <div className="flex-1">
+                <span onClick={() => {
+                  setValue(50)
+                }}>50%</span>
+              </div>
+              <div className="flex-1">
+                <span onClick={() => {
+                  setValue(75)
+                }}>75%</span>
+              </div>
+              <div className="flex-1">
+                <span onClick={() => {
+                  setValue(100)
+                }}>100%</span>
+              </div>
             </div>
           </div>
         </div>
         <div className=" text-center py-2  w-full ">
           <ArrowDownOutlined />
         </div>
-        <div className=" bg-1 rounded-xl p-3 mb-4">
-          <div className="flex  font-medium">
-            <div className="flex-1 ">
-              {
-                fromTokenValue(new BigNumber(tokenAReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).multipliedBy(value).dividedBy(100).toFixed(), Number(tokenADecimals), 6)
-              }
+        <div className="  borderSelectToken">
+          <div className=" p-3 ">
+            <div className="flex  font-medium">
+              <div className="flex-1 ">
+                {
+                  fromTokenValue(new BigNumber(tokenAReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).multipliedBy(value).dividedBy(100).toFixed(), Number(tokenADecimals), 6)
+                }
+              </div>
+              <div>
+                <TokenName tokenAddr={tokenA} />
+              </div>
             </div>
-            <div>
-              <TokenName tokenAddr={tokenA} />
-            </div>
-          </div>
-          <div className="flex  font-medium">
-            <div className="flex-1 ">
-              {
-                fromTokenValue(new BigNumber(tokenBReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).multipliedBy(value).dividedBy(100).toFixed(), Number(tokenBDecimals), 6)
-              }
-            </div>
-            <div>
-              <TokenName tokenAddr={tokenB} />
+            <div className="flex  font-medium">
+              <div className="flex-1 ">
+                {
+                  fromTokenValue(new BigNumber(tokenBReserves).multipliedBy(accountPairAmount).dividedBy(pairTotal).multipliedBy(value).dividedBy(100).toFixed(), Number(tokenBDecimals), 6)
+                }
+              </div>
+              <div>
+                <TokenName tokenAddr={tokenB} />
+              </div>
             </div>
           </div>
         </div>
 
         <div className=" text-xs mb-4" >
-          <div>
-            兑换率:
-          </div>
+          <div className=' mt-1'> {t("Exchangerate")}:</div>
           <div className="flex-1 text-right">
             <p>1 <TokenName tokenAddr={tokenA} /> ={fromTokenValue(tokenAtoTokenB, Number(tokenBDecimals), 3)} <TokenName tokenAddr={tokenB} /></p>
             <p>1 <TokenName tokenAddr={tokenB} /> ={fromTokenValue(tokenBtoTokenA, Number(tokenADecimals), 3)} <TokenName tokenAddr={tokenA} /></p>
@@ -368,7 +351,7 @@ function RemovePool() {
         }}>
           <div className='tradeButton py-2' onClick={() => {
             sendRemoveLiquidityApprove(pairAddress)
-          }} >移除</div>
+          }} >{t("RemoveLiquidity")}</div>
         </div>
       </div>
     </div>

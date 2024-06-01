@@ -12,12 +12,14 @@ import { maxInt256, zeroAddress } from 'viem';
 import { menuLogo } from '../../image';
 import { fromTokenValue, removeTrailingZeros, toTokenValue } from '../../utils';
 import { Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
 
 function Ipo() {
     const { account } = useGlobal()
+    const { t } = useTranslation()
     const [ipoAmount, setIpoAmount] = useState<string>("")
 
     const [tipOpen, setTipOpen] = useState<boolean>(false);
@@ -68,7 +70,6 @@ function Ipo() {
     // inviters
     const getInviters = async () => {
         let { data, code }: IResponse = await getReadData("inviters", ipoABI, IpoAddr, [account], account);
-        console.log("getInviters", data)
         if (code == 200) {
             setInviters(data)
         }
@@ -77,7 +78,6 @@ function Ipo() {
     // manager
     const getManager = async () => {
         let { data, code }: IResponse = await getReadData("manager", ipoABI, IpoAddr, [], account);
-        console.log("getManager", data)
         if (code == 200) {
             setManagerAddr(data)
         }
@@ -122,7 +122,7 @@ function Ipo() {
     const sendIpoJionApprove = async (inviterAddr: any) => {
         setTipOpen(true);
         setTipOpenState("loading")
-        setTipOpenText("加载中...")
+        setTipOpenText(`${t("TransactionPacking")}`)
         try {
             const allowanceConfig: any = await prepareWriteContract({
                 address: UsdtAddr,
@@ -134,9 +134,8 @@ function Ipo() {
             console.log("balanceConfig", balanceConfig)
             let sendAmount = new BigNumber(ipoAmount.toString()).multipliedBy(10 ** balanceConfig.decimals).toString()
             if (new BigNumber(balanceConfig.value).isLessThan(sendAmount)) {
-                console.log("余额不足")
                 setTipOpenState("error")
-                setTipOpenText("余额不足")
+               setTipOpenText(`${t("Insufficientbalance")}`)
                 setTimeout(() => {
                     setTipOpenState("")
                     setTipOpen(false)
@@ -145,7 +144,7 @@ function Ipo() {
             }
 
             if (new BigNumber(allowanceConfig.result.toString()).isLessThan(sendAmount)) {
-                setTipOpenText("授权中...")
+               setTipOpenText(`${t("Authorizing")}`)
                 const approveConfig = await prepareWriteContract({
                     address: UsdtAddr,
                     abi: erc20ABI,
@@ -156,14 +155,13 @@ function Ipo() {
                 let status = await sendStatus(approveConfig)
 
                 if (status) {
-                    console.log("授权成功")
-                    setTipOpenText("授权成功...")
+                    setTipOpenText(`${t("AuthorizationSuccessful")}`)
                     setTimeout(() => {
                         sendIpoJionApprove(inviterAddr)
                     }, 1000);
                 } else {
                     setTipOpenState("error")
-                    setTipOpenText("授权失败")
+                    setTipOpenText(`${t("AuthorizationFailed")}`)
                     setTimeout(() => {
                         setTipOpenState("")
                         setTipOpen(false)
@@ -185,7 +183,6 @@ function Ipo() {
                 functionName: 'join',
                 args: [sendAmount, inviterAddr],
             })
-            console.log("ipoConfig", ipoConfig)
 
             let status = await sendStatus(ipoConfig)
 
@@ -196,7 +193,7 @@ function Ipo() {
                 sendTipErr()
             }
         } catch (error) {
-            console.log(error)
+            
             sendTipErr()
         }
     }
@@ -204,7 +201,7 @@ function Ipo() {
     const sendClaim = async () => {
         setTipOpen(true);
         setTipOpenState("loading")
-        setTipOpenText("加载中...")
+        setTipOpenText(`${t("TransactionPacking")}`)
         try {
             const ipoConfig = await prepareWriteContract({
                 address: IpoAddr,
@@ -221,14 +218,14 @@ function Ipo() {
                 sendTipErr()
             }
         } catch (error) {
-            console.log(error)
+            
             sendTipErr()
         }
     }
 
     const sendTipSuccess = () => {
         setTipOpenState("success")
-        setTipOpenText("交易成功")
+        setTipOpenText(`${t("successfulTransaction")}`)
         setTimeout(() => {
             init();
             setTipOpen(false)
@@ -238,7 +235,7 @@ function Ipo() {
 
     const sendTipErr = () => {
         setTipOpenState("error")
-        setTipOpenText("交易失败")
+        setTipOpenText(`${t("transactionFailed")}`)
         setTimeout(() => {
             setTipOpen(false)
             setTipOpenState("")

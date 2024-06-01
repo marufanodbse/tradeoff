@@ -31,7 +31,6 @@ function TokenBalance({ token, addr, decimalPlaces, setTokenBalance, change }: I
             const balanceObj = await fetchBalance({
                 address: account,
             })
-            console.log("balanceObj",balanceObj)
             setDecimals(18);
             setBalance(balanceObj.value.toString());
             if (setTokenBalance) {
