@@ -458,7 +458,7 @@ function Node() {
                         </div>
                         <div className=' flex-1  mt-3 text-gray-500'>
                             <div className='text-xs flex'>
-                                {new BigNumber(stakeAmount).isZero() ? <p className=' flex-1 text-right '>{t("Creatingrequires")} 10000 USDT</p> : <p className=' flex-1 text-right '>{t("Creatingrequires")} {fromTokenValue(stakeAmount, 18, 3)} <TokenName tokenAddr={REWARD} /></p>}
+                                {new BigNumber(stakeAmount).isZero() ? <p className=' flex-1 text-right '>{t("Creatingrequires")} 5000 USDT</p> : <p className=' flex-1 text-right '>{t("Creatingrequires")} {fromTokenValue(stakeAmount, 18, 3)} <TokenName tokenAddr={REWARD} /></p>}
                             </div>
                         </div>
                     </div>

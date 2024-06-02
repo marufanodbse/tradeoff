@@ -1,6 +1,6 @@
 import Input from 'antd/es/input'
 import { useEffect, useState } from 'react'
-import {  menuLogo } from '../../image'
+import { menuLogo } from '../../image'
 import { verifyNum } from '../../utils/formatting'
 import { useGlobal } from '../../context/GlobalProvider'
 import { prepareWriteContract } from 'wagmi/actions'
@@ -44,6 +44,7 @@ function Stake() {
 
     const [unStakeOpen, setUnStakeOpen] = useState<boolean>(false);
     const [unStakeAmount, setUnStakeAmount] = useState<string>("")
+    const [allStakeValue, setAllStakeValue] = useState<string>("0")
 
     useEffect(() => {
         init()
@@ -52,6 +53,15 @@ function Stake() {
 
     const init = async () => {
         getNodeList()
+        getStakeValue()
+    }
+
+    // stakeValue
+    const getStakeValue = async () => {
+        let { data, code }: IResponse = await getReadData("stakeValue", nodeABI, NodeAddr, [account], account);
+        if (code == 200) {
+            setAllStakeValue(data[1].toString())
+        }
     }
 
     const getRewardPool = async () => {
@@ -83,6 +93,9 @@ function Stake() {
                     arr.push(obj)
                 }
                 console.log(arr)
+                if (arr.length > 0) {
+                    setStakeNode(arr[0].nodeAddress)
+                }
                 setNodeList([...arr])
             })
         }
@@ -116,7 +129,7 @@ function Stake() {
             }
 
             if (new BigNumber(allowanceConfig.result.toString()).isLessThan(sendAmount)) {
-               setTipOpenText(`${t("Authorizing")}`)
+                setTipOpenText(`${t("Authorizing")}`)
                 const approveConfig = await prepareWriteContract({
                     address: tokenAddr,
                     abi: erc20ABI,
@@ -127,7 +140,7 @@ function Stake() {
                 let status = await sendStatus(approveConfig)
 
                 if (status) {
-                   setTipOpenText(`${t("AuthorizationSuccessful")}`)
+                    setTipOpenText(`${t("AuthorizationSuccessful")}`)
                     setTimeout(() => {
                         sendStakeApprove(tokenAddr, approveAddr)
                     }, 1000);
@@ -252,7 +265,7 @@ function Stake() {
                 title={t("Pledgequantity")}
                 footer={null}
             >
-                
+
                 <div >
                     <div className=' flex  mb-5'>
                         <p className=' leading-8 text-gray-500 mr-2 text-sm'>{t("Quantity")}:</p>
@@ -323,9 +336,15 @@ function Stake() {
                 </div>
 
                 <div className='mx-6 borderSelectToken rounded-xl bg-white mb-5'>
-                    <div className='px-4 pt-3 pb-3 border-b border-[#ccc] flex'>
+
+                    <div className='px-4 pt-4 pb-4 border-b border-[#ccc] flex'>
                         <div className=' bg-1 h-10 w-10 rounded-full'>
                             <img className=' h-10 w-10 p-2' src={menuLogo} alt="" />
+                        </div>
+                        <div className=' flex-1  mt-3 text-gray-500'>
+                            <div className='text-xs flex'>
+                                <p className=' flex-1 text-right '>{t("Netpledge")} {fromTokenValue(allStakeValue, 18, 2)}</p>
+                            </div>
                         </div>
                     </div>
                     <div className='px-4'>
@@ -361,7 +380,7 @@ function Stake() {
                         </div>
                     </div>
                 </div>
-               
+
                 <div className=' mx-6  rounded-xl mb-3'>
                     {
                         nodeList && nodeList.map((item: INodeItem, index: number) => {
@@ -389,7 +408,7 @@ interface IStakeItem {
 
 function StakeItem({ nodeAddress, nodeTitle, rate, status, setStakeNode, sendHarvest, setStakeOpen, setUnStakeOpen }: IStakeItem) {
     const { account } = useGlobal()
-    const {t}=useTranslation()
+    const { t } = useTranslation()
     const [reward, setReward] = useState<string>("0");
     const [pledgeValue, setPledgeValue] = useState<string>("0");
     const [lockValue, setLockValue] = useState<string>("0");
