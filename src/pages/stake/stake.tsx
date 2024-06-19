@@ -53,16 +53,24 @@ function Stake() {
 
     const init = async () => {
         getNodeList()
-        getStakeValue()
+        // getStakeValue()
     }
 
-    // stakeValue
-    const getStakeValue = async () => {
-        let { data, code }: IResponse = await getReadData("stakeValue", nodeABI, NodeAddr, [account], account);
+    const getStakeInfo = async (nodeAddress:any) => {
+        let { data, code }: IResponse = await getReadData("stakeInfo", nodeStakeABI, NodeStakeAddr, [nodeAddress, account], account);
+        console.log("getStakeInfo",data,nodeAddress)
         if (code == 200) {
-            setAllStakeValue(data[1].toString())
+            setAllStakeValue(data[2].toString())
         }
     }
+    // // stakeValue
+    // const getStakeValue = async () => {
+    //     let { data, code }: IResponse = await getReadData("stakeValue", nodeABI, NodeAddr, [account], account);
+    //     console.log("getStakeValue",data)
+    //     if (code == 200) {
+    //         setAllStakeValue(data[1].toString())
+    //     }
+    // }
 
     const getRewardPool = async () => {
         let { data, code }: IResponse = await getReadData("rewardPool", nodeStakeABI, NodeStakeAddr, [], account);
@@ -95,6 +103,7 @@ function Stake() {
                 console.log(arr)
                 if (arr.length > 0) {
                     setStakeNode(arr[0].nodeAddress)
+                    getStakeInfo(arr[0].nodeAddress)
                 }
                 setNodeList([...arr])
             })
@@ -353,6 +362,7 @@ function Stake() {
                             <Select className=' flex-1 overflow-hidden' value={stakeNode} onChange={(e) => {
                                 console.log(e)
                                 setStakeNode(e)
+                                getStakeInfo(e)
                             }}>
                                 {
                                     nodeList && nodeList.map((item: INodeItem, index: number) => {
@@ -419,6 +429,7 @@ function StakeItem({ nodeAddress, nodeTitle, rate, status, setStakeNode, sendHar
 
     const getStakeInfo = async () => {
         let { data, code }: IResponse = await getReadData("stakeInfo", nodeStakeABI, NodeStakeAddr, [nodeAddress, account], account);
+        console.log("getStakeInfo",data)
         if (code == 200) {
             setReward(data[3].toString())
             setPledgeValue(data[1].toString())

@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import copy from 'copy-to-clipboard';
 import { verifyInt } from '../../utils/formatting';
 import { useTranslation } from 'react-i18next';
+import Countdown from 'antd/es/statistic/Countdown';
 
 let IpoAddr: any = process.env.REACT_APP_IPOAddr + ""
 let UsdtAddr: any = process.env.REACT_APP_TOKEN_USDT + ""
@@ -34,7 +35,7 @@ function Node() {
     const [inviters, setInviters] = useState<string>("")
     const [invitersPop, setInvitersPop] = useState<boolean>(false);
 
-    const [stakeAmount, setStakeAmount] = useState<string>("0")
+    // const [stakeAmount, setStakeAmount] = useState<string>("0")
     const [nodeEndTime, setNodeEndTime] = useState<string>("0")
     const [nodeStartTime, setNodeStartTime] = useState<string>("0")
     const [nodeValue, setNodeValue] = useState<string>("0")
@@ -46,6 +47,7 @@ function Node() {
     const [stakeTime, setStakeTime] = useState<string>("0")
     const [releaseTime, setReleaseTime] = useState<string>("0")
     const [feeRate, setFeeRate] = useState<string>("")
+    const [createNodeAmount, setCreateNodeAmount] = useState<string>("0")
 
     useEffect(() => {
         init()
@@ -61,14 +63,24 @@ function Node() {
     }, [account])
 
     const init = () => {
-        getStakeAmount()
+        // getStakeAmount()
         getSTAKE_PERIOD()
         getRELEASE_PERIOD()
         getRewardPool()
+        getAmount()
         if (account) {
             getNodeInfo()
             getStakeValue()
             getRewardValue()
+        }
+    }
+
+    // stakeValue
+    const getAmount = async () => {
+        let { data, code }: IResponse = await getReadData("amount", nodeABI, NodeAddr, [], account);
+        console.log("getAmount", data)
+        if (code == 200) {
+            setCreateNodeAmount(data.toString())
         }
     }
 
@@ -87,22 +99,26 @@ function Node() {
     // rewardPool
     const getRewardValue = async () => {
         let { data, code }: IResponse = await getReadData("rewardValue", nodeABI, NodeAddr, [account], account);
+        console.log("getRewardValue", data)
+
         if (code == 200) {
             setRewardValueAmount(data.toString())
         }
     }
 
     // stakeAmount
-    const getStakeAmount = async () => {
-        let { data, code }: IResponse = await getReadData("stakeAmount", nodeABI, NodeAddr, [], account);
-        if (code == 200) {
-            setStakeAmount(data.toString())
-        }
-    }
+    // const getStakeAmount = async () => {
+    //     let { data, code }: IResponse = await getReadData("stakeAmount", nodeABI, NodeAddr, [], account);
+    //     console.log("getStakeAmount",data)
+    //     if (code == 200) {
+    //         setStakeAmount(data.toString())
+    //     }
+    // }
 
     // STAKE_PERIOD
     const getSTAKE_PERIOD = async () => {
         let { data, code }: IResponse = await getReadData("STAKE_PERIOD", nodeABI, NodeAddr, [], account);
+        console.log("getSTAKE_PERIOD", data)
         if (code == 200) {
             setStakeTime(data.toString())
         }
@@ -119,7 +135,7 @@ function Node() {
     // nodeInfo
     const getNodeInfo = async () => {
         let { data, code }: IResponse = await getReadData("nodeInfo", nodeABI, NodeAddr, [account], account);
-        console.log("getNodeInfo",data)
+        console.log("getNodeInfo", data)
         if (code == 200) {
             setNodeEndTime(data.endTime.toString())
             setNodeStartTime(data.startTime.toString())
@@ -140,11 +156,12 @@ function Node() {
             })
             const balanceConfig: any = await fetchBalanceObj(account, tokenAddr)
             let sendAmount: any = "0"
-            if (new BigNumber(stakeAmount).isZero()) {
-                sendAmount = new BigNumber(10000).multipliedBy(10 ** balanceConfig.decimals).toString()
-            } else {
-                sendAmount = stakeAmount
-            }
+            // if (new BigNumber(stakeAmount).isZero()) {
+            //     sendAmount = createNodeAmount
+            // } else {
+            //     sendAmount = stakeAmount
+            // }
+            sendAmount = createNodeAmount
             if (new BigNumber(balanceConfig.value).isLessThan(sendAmount)) {
                 setTipOpenState("error")
                 setTipOpenText(`${t("Insufficientbalance")}`)
@@ -297,7 +314,14 @@ function Node() {
             if (new BigNumber(startTime).plus(stakeTime).isLessThan(nowTime)) {
                 html = <div className='tradeButton p-0 w-24' onClick={() => { sendUnlock() }}> {t("Unlock")}</div>
             } else {
-                html = <div className='tradeButtonGray p-0 w-24'>{t("Unlock")}</div>
+                html = <div className='tradeButtonGray p-0 w-28'>
+                <Countdown className=' text-sm leading-7 text-white' valueStyle={{
+                    fontSize:"12px",
+                    color:"#fff"
+                }} format={"D "+ t("day")+" H:m:s"} value={new BigNumber(startTime).plus(stakeTime).multipliedBy(1000).toNumber()}  onFinish={()=>{
+                    init()
+                }} />
+                </div>
             }
         } else {
             html = <div className='tradeButtonGray p-0 w-24'>{t("Unlocked")}</div>
@@ -386,14 +410,21 @@ function Node() {
             title={<p className=' font-DengXian'>{t("Createnodes")}</p>}
         >
             <div className=' mb-3' >
-                {
+                {/* {
                     new BigNumber(stakeAmount).isZero() ? <div className=' '>
                         <p className=' leading-6 text-gray-500 font-DengXian text-sm'>{t("Recommendedaddress")}:</p>
                         <Input className='' value={inviters} onChange={(e) => {
                             setInviters(e.target.value)
                         }} defaultValue="0.0" />
                     </div> : <></>
-                }
+                } */}
+
+                <div className=' '>
+                    <p className=' leading-6 text-gray-500 font-DengXian text-sm'>{t("Recommendedaddress")}:</p>
+                    <Input className='' value={inviters} onChange={(e) => {
+                        setInviters(e.target.value)
+                    }} defaultValue="0.0" />
+                </div>
 
                 <div className='  '>
                     <p className=' leading-6 text-gray-500 font-DengXian text-sm'>{t("fees")}:</p>
@@ -408,7 +439,8 @@ function Node() {
             </div>
             <div>
                 <div className='tradeButton py-2' onClick={() => {
-                    if (inviters == "" && new BigNumber(stakeAmount).isZero()) {
+                    // if (inviters == "" && new BigNumber(stakeAmount).isZero()) {
+                    if (inviters == "") {
                         setTipOpen(true);
                         setTipOpenState("error")
                         setTipOpenText("Please fill in the recommender's address")
@@ -420,11 +452,11 @@ function Node() {
                     }
 
                     let token: any
-                    if (new BigNumber(stakeAmount).isZero()) {
-                        token = UsdtAddr
-                    } else {
-                        token = REWARD
-                    }
+                    // if (new BigNumber(stakeAmount).isZero()) {
+                    // } else {
+                    //     token = REWARD
+                    // }
+                    token = UsdtAddr
 
                     if (feeRate == "" || new BigNumber(feeRate).isLessThan(5) || new BigNumber(feeRate).isGreaterThan(10)) {
                         setTipOpen(true);
@@ -457,8 +489,12 @@ function Node() {
                             <img className=' h-10 w-10 p-2' src={menuLogo} alt="" />
                         </div>
                         <div className=' flex-1  mt-3 text-gray-500'>
+                            {/* <div className='text-xs flex'>
+                                {new BigNumber(stakeAmount).isZero() ?: <p className=' flex-1 text-right '>{t("Creatingrequires")} {fromTokenValue(stakeAmount, 18, 3)} <TokenName tokenAddr={REWARD} /></p>}
+                            </div> */}
+
                             <div className='text-xs flex'>
-                                {new BigNumber(stakeAmount).isZero() ? <p className=' flex-1 text-right '>{t("Creatingrequires")} 5000 USDT</p> : <p className=' flex-1 text-right '>{t("Creatingrequires")} {fromTokenValue(stakeAmount, 18, 3)} <TokenName tokenAddr={REWARD} /></p>}
+                                <p className=' flex-1 text-right '>{t("Creatingrequires")} {fromTokenValue(createNodeAmount, 18, 2)} <TokenName tokenAddr={UsdtAddr} /> </p>
                             </div>
                         </div>
                     </div>
@@ -490,11 +526,11 @@ function Node() {
                         <div className='borderSelectToken mx-6  mt-5 mb-8'>
                             <div className='  text-center p-3'>
                                 <div className='font-bold text-xl flex leading-8'>
-                                     {t("Share")}:
+                                    {t("Share")}:
                                     <div className=" flex mt-1" onClick={() => {
                                         const currentUrl = window.location.href
-                                        console.log("currentUrl",currentUrl)
-                                        copy(window.location.href+ "/" + account + "");
+                                        console.log("currentUrl", currentUrl)
+                                        copy(window.location.href + "/" + account + "");
                                         setTipOpen(true)
                                         setTipOpenState("success")
                                         setTipOpenText(`${t("Copy")}`)

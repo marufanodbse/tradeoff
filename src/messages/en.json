@@ -1,13 +1,11 @@
 {
-    "titpop": {
-        "TransactionPacking": "Transaction Loading",
-        "successfulTransaction": "Transaction Successfully",
-        "transactionFailed": "Transaction Failed",
-        "Authorizing": "Authorization",
-        "AuthorizationSuccessful": "Authorization Successfully",
-        "AuthorizationFailed": "Authorization Failed",
-        "Insufficientbalance": "Insufficient account balance"
-    },
+    "TransactionPacking": "Transaction Loading",
+    "successfulTransaction": "Transaction Successfully",
+    "transactionFailed": "Transaction Failed",
+    "Authorizing": "Authorization",
+    "AuthorizationSuccessful": "Authorization Successfully",
+    "AuthorizationFailed": "Authorization Failed",
+    "Insufficientbalance": "Insufficient account balance",
     "Introduce": "1、Introduce",
     "IntroduceDetail": "TradeOF is a risk-free and high-yield DeFi platform facility suitablefor investing in cryptocurrency assets. For native cryptocurrency assets on the chain,TradeOFF redefines option trading by eliminating the US dollar standard risk and banning margin calls and features based on DeFi.",
     "Features": "2、The core features of TradeOFF",
@@ -81,9 +79,10 @@
     "Add":"Add",
     "Quantityofrelease":"Quantity of release",
     "Pleasefillinthequantity":"Please fill in the quantity",
-    "Totalpledge":"Pledge the node",
+    "Totalpledge":"Pledge",
     "Quantity":"Quantity",
     "language":"Language switch",
     "Creatingrequires":"Creating a node requires",
-    "Pledgequantity":"Pledge quantity"
+    "Pledgequantity":"Pledge quantity",
+    "day":"day"
 }
